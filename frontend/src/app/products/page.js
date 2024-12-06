@@ -13,7 +13,7 @@ const ProductsPage = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await API.get('/products/with-categories');
+                const response = await API.get('/products');
                 setProducts(response.data.sort((a, b) => a.product_id - b.product_id));
             } catch (err) {
                 console.error(err);

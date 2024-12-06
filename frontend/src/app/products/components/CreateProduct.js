@@ -37,7 +37,7 @@ const CreateProduct = ({ onProductCreated }) => {
     return (
         <div>
             <h2 className="text-lg font-bold mb-2">Add New Product</h2>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 text-black">
                 <input
                     type="text"
                     name="product_name"

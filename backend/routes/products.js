@@ -2,18 +2,8 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
-// Show all products
-router.get('/', async (req, res) => {
-    try {
-        const [rows] = await db.query('SELECT * FROM Products');
-        res.json(rows);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
 // Show all products with category name
-router.get('/with-categories', async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const [rows] = await db.query(`
             SELECT 
@@ -27,8 +17,8 @@ router.get('/with-categories', async (req, res) => {
                 p.is_active,
                 p.created_at, 
                 p.updated_at
-            FROM Products p
-            JOIN Categories c ON p.category_id = c.category_id
+            FROM products p
+            JOIN categories c ON p.category_id = c.category_id
         `);
         res.json(rows);
     } catch (err) {
@@ -45,7 +35,19 @@ router.get('/:id', async (req, res) => {
     }
 
     try {
-        const [rows] = await db.query('SELECT * FROM Products WHERE product_id = ?', [id]);
+        const [rows] = await db.query(`
+            SELECT 
+                p.product_id, 
+                p.product_name, 
+                p.sku, 
+                p.description, 
+                p.quantity, 
+                CAST(p.unit_price AS DECIMAL(10,2)) AS unit_price,
+                c.category_name
+            FROM products p
+            LEFT JOIN categories c ON p.category_id = c.category_id
+            WHERE p.product_id = ?
+        `, [id]);
 
         if (rows.length === 0) {
             return res.status(404).json({ error: 'Product not found' });
@@ -66,13 +68,13 @@ router.post('/', async (req, res) => {
     }
 
     try {
-        const [existingCategory] = await db.query('SELECT * FROM Categories WHERE category_id = ?', [category_id]);
+        const [existingCategory] = await db.query('SELECT * FROM categories WHERE category_id = ?', [category_id]);
         if (existingCategory.length === 0) {
             return res.status(400).json({ error: 'Invalid category_id. Category does not exist' });
         }
 
         const [result] = await db.query(
-            'INSERT INTO Products (product_name, sku, category_id, description, quantity, unit_price) VALUES (?, ?, ?, ?, ?, ?)',
+            'INSERT INTO products (product_name, sku, category_id, description, quantity, unit_price) VALUES (?, ?, ?, ?, ?, ?)',
             [product_name, sku, category_id, description, quantity, unit_price]
         );
         res.status(201).json({ id: result.insertId, product_name, sku, category_id, description, quantity, unit_price });
@@ -95,13 +97,13 @@ router.put('/:id', async (req, res) => {
     }
 
     try {
-        const [existingProduct] = await db.query('SELECT * FROM Products WHERE product_id = ?', [id]);
+        const [existingProduct] = await db.query('SELECT * FROM products WHERE product_id = ?', [id]);
         if (existingProduct.length === 0) {
             return res.status(404).json({ error: 'Product not found' });
         }
 
         const [result] = await db.query(
-            `UPDATE Products
+            `UPDATE products
             SET product_name = ?, sku = ?, category_id = ?, description = ?, quantity = ?, unit_price = ?
             WHERE product_id = ?`,
             [product_name, sku, category_id, description, quantity, unit_price, id]
@@ -130,17 +132,17 @@ router.patch('/:id/status', async (req, res) => {
     }
 
     try {
-        const [existingProduct] = await db.query('SELECT * FROM Products WHERE product_id = ?', [id]);
+        const [existingProduct] = await db.query('SELECT * FROM products WHERE product_id = ?', [id]);
         if (existingProduct.length === 0) {
             return res.status(404).json({ error: 'Product not found' });
         }
 
         await db.query(
-            `UPDATE Products SET is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE product_id = ?`,
+            `UPDATE products SET is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE product_id = ?`,
             [is_active, id]
         );
 
-        const [updatedProduct] = await db.query('SELECT * FROM Products WHERE product_id = ?', [id]);
+        const [updatedProduct] = await db.query('SELECT * FROM products WHERE product_id = ?', [id]);
         res.status(200).json({
             message: `Product status updated successfully to ${is_active ? 'active' : 'inactive'}`,
             product: updatedProduct[0],

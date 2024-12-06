@@ -5,7 +5,7 @@ const db = require('../db');
 // Show all customers
 router.get('/', async (req, res) => {
     try {
-        const [rows] = await db.query('SELECT * FROM Customers');
+        const [rows] = await db.query('SELECT * FROM customers');
         res.json(rows);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -22,7 +22,7 @@ router.get('/:id', async (req, res) => {
     }
 
     try {
-        const [rows] = await db.query('SELECT * FROM Customers WHERE customer_id = ?', [id]);
+        const [rows] = await db.query('SELECT * FROM customers WHERE customer_id = ?', [id]);
 
         if (rows.length === 0) {
             return res.status(404).json({ error: 'Customer not found' });
@@ -45,7 +45,7 @@ router.post('/', async (req, res) => {
 
     try {
         const [result] = await db.query(
-            'INSERT INTO Customers (customer_name, contact_name, phone, email, address) VALUES (?, ?, ?, ?, ?)',
+            'INSERT INTO customers (customer_name, contact_name, phone, email, address) VALUES (?, ?, ?, ?, ?)',
             [customer_name, contact_name, phone, email, address]
         );
         res.status(201).json({ id: result.insertId, customer_name, contact_name, phone, email, address });
@@ -65,13 +65,13 @@ router.put('/:id', async (req, res) => {
     }
 
     try {
-        const [existingCustomer] = await db.query('SELECT * FROM Customers WHERE customer_id = ?', [id]);
+        const [existingCustomer] = await db.query('SELECT * FROM customers WHERE customer_id = ?', [id]);
         if (existingCustomer.length === 0) {
             return res.status(404).json({ error: 'Customer not found' });
         }
 
-        const [result] = await db.query(
-            `UPDATE Customers
+        await db.query(
+            `UPDATE customers
             SET customer_name = ?, contact_name = ?, phone = ?, email = ?, address = ?
             WHERE customer_id = ?`,
             [customer_name, contact_name, phone, email, address, id]
@@ -102,13 +102,13 @@ router.patch('/:id/status', async (req, res) => {
     }
 
     try {
-        const [existingCustomer] = await db.query('SELECT * FROM Customers WHERE customer_id = ?', [id]);
+        const [existingCustomer] = await db.query('SELECT * FROM customers WHERE customer_id = ?', [id]);
         if (existingCustomer.length === 0) {
             return res.status(404).json({ error: 'Customer not found' });
         }
 
-        const [result] = await db.query(
-            `UPDATE Customers SET is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE customer_id = ?`,
+        await db.query(
+            `UPDATE customers SET is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE customer_id = ?`,
             [is_active, id]
         );
 

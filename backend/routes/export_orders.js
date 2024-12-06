@@ -20,9 +20,9 @@ router.get('/', async (req, res) => {
                 eo.subtotal,
                 eo.total_amount,
                 eo.status
-            FROM Export_Orders eo
-            JOIN Customers c ON eo.customer_id = c.customer_id
-            JOIN Products p ON eo.product_id = p.product_id
+            FROM export_orders eo
+            JOIN customers c ON eo.customer_id = c.customer_id
+            JOIN products p ON eo.product_id = p.product_id
         `);
         res.json(rows);
     } catch (err) {
@@ -54,9 +54,9 @@ router.get('/:id', async (req, res) => {
                 eo.subtotal,
                 eo.total_amount,
                 eo.status
-            FROM Export_Orders eo
-            JOIN Customers c ON eo.customer_id = c.customer_id
-            JOIN Products p ON eo.product_id = p.product_id
+            FROM export_orders eo
+            JOIN customers c ON eo.customer_id = c.customer_id
+            JOIN products p ON eo.product_id = p.product_id
             WHERE eo.export_order_id = ?
         `, [id]);
 
@@ -91,8 +91,8 @@ router.post('/', async (req, res) => {
 
     try {
         // ตรวจสอบว่าลูกค้าและสินค้ามีอยู่จริง
-        const [customerExists] = await db.query('SELECT * FROM Customers WHERE customer_id = ?', [customer_id]);
-        const [productExists] = await db.query('SELECT * FROM Products WHERE product_id = ?', [product_id]);
+        const [customerExists] = await db.query('SELECT * FROM customers WHERE customer_id = ?', [customer_id]);
+        const [productExists] = await db.query('SELECT * FROM products WHERE product_id = ?', [product_id]);
 
         if (customerExists.length === 0) {
             return res.status(400).json({ error: 'Invalid customer_id. Customer does not exist' });
@@ -103,7 +103,7 @@ router.post('/', async (req, res) => {
 
         // เพิ่ม Export Order ใหม่
         const [result] = await db.query(`
-            INSERT INTO Export_Orders (
+            INSERT INTO export_orders (
                 customer_id,
                 shipping_date,
                 shipping_address,
@@ -127,7 +127,7 @@ router.post('/', async (req, res) => {
         ]);
 
         // ดึงข้อมูล Export Order ที่เพิ่งสร้าง
-        const [newOrder] = await db.query('SELECT * FROM Export_Orders WHERE export_order_id = ?', [result.insertId]);
+        const [newOrder] = await db.query('SELECT * FROM export_orders WHERE export_order_id = ?', [result.insertId]);
         res.status(201).json(newOrder[0]);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -159,14 +159,14 @@ router.put('/:id', async (req, res) => {
     }
 
     try {
-        const [existingOrder] = await db.query('SELECT * FROM Export_Orders WHERE export_order_id = ?', [id]);
+        const [existingOrder] = await db.query('SELECT * FROM export_orders WHERE export_order_id = ?', [id]);
         if (existingOrder.length === 0) {
             return res.status(404).json({ error: 'Export Order not found' });
         }
 
         // ตรวจสอบว่าลูกค้าและสินค้ามีอยู่จริง
-        const [customerExists] = await db.query('SELECT * FROM Customers WHERE customer_id = ?', [customer_id]);
-        const [productExists] = await db.query('SELECT * FROM Products WHERE product_id = ?', [product_id]);
+        const [customerExists] = await db.query('SELECT * FROM customers WHERE customer_id = ?', [customer_id]);
+        const [productExists] = await db.query('SELECT * FROM products WHERE product_id = ?', [product_id]);
 
         if (customerExists.length === 0) {
             return res.status(400).json({ error: 'Invalid customer_id. Customer does not exist' });
@@ -177,7 +177,7 @@ router.put('/:id', async (req, res) => {
 
         // อัปเดต Export Order
         await db.query(`
-            UPDATE Export_Orders
+            UPDATE export_orders
             SET
                 customer_id = ?,
                 shipping_date = ?,
@@ -203,7 +203,7 @@ router.put('/:id', async (req, res) => {
         ]);
 
         // ดึงข้อมูล Export Order ที่อัปเดตแล้ว
-        const [updatedOrder] = await db.query('SELECT * FROM Export_Orders WHERE export_order_id = ?', [id]);
+        const [updatedOrder] = await db.query('SELECT * FROM export_orders WHERE export_order_id = ?', [id]);
         res.status(200).json(updatedOrder[0]);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -224,7 +224,7 @@ router.patch('/:id/status', async (req, res) => {
     }
 
     try {
-        const [existingOrder] = await db.query('SELECT * FROM Export_Orders WHERE export_order_id = ?', [id]);
+        const [existingOrder] = await db.query('SELECT * FROM export_orders WHERE export_order_id = ?', [id]);
         if (existingOrder.length === 0) {
             return res.status(404).json({ error: 'Export Order not found' });
         }
@@ -239,7 +239,7 @@ router.patch('/:id/status', async (req, res) => {
         }
 
         await db.query(`
-            UPDATE Export_Orders
+            UPDATE export_orders
             SET
                 shipping_status = COALESCE(?, shipping_status),
                 status = COALESCE(?, status),
@@ -248,7 +248,7 @@ router.patch('/:id/status', async (req, res) => {
         `, [shipping_status, status, id]);
 
         // ดึงข้อมูล Export Order ที่อัปเดตแล้ว
-        const [updatedOrder] = await db.query('SELECT * FROM Export_Orders WHERE export_order_id = ?', [id]);
+        const [updatedOrder] = await db.query('SELECT * FROM export_orders WHERE export_order_id = ?', [id]);
         res.status(200).json({
             message: 'Export Order status updated successfully',
             order: updatedOrder[0],

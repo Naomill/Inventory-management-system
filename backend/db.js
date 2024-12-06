@@ -6,22 +6,19 @@ const pool = mysql.createPool({
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
+    waitForConnections: true, // ให้ระบบรอการเชื่อมต่อเมื่อ connection เต็ม
+    connectionLimit: 10, // จำนวน connection สูงสุดใน pool
+    queueLimit: 0 // ไม่มีการจำกัดคิว
 });
 
-module.exports = pool.promise();
-
-const connection = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-});
-
-connection.connect((err) => {
+pool.getConnection((err, connection) => {
     if (err) {
-        console.error('Database connection failed:', err.stack);
+        console.error('Error connecting to the database:', err.message);
         return;
     }
-    console.log('Connected to database.');
-    connection.end();
+    console.log('Connected to AWS RDS Database!');
+    if (connection) connection.release(); // ปล่อย connection หลังทดสอบ
 });
+
+module.exports = pool.promise(); // ใช้ promise-based connection
+

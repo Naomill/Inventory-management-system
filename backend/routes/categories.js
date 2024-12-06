@@ -5,7 +5,7 @@ const db = require('../db');
 // Show all categories
 router.get('/', async (req, res) => {
     try {
-        const [rows] = await db.query('SELECT * FROM Categories');
+        const [rows] = await db.query('SELECT * FROM categories');
         res.json(rows);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -21,7 +21,7 @@ router.get('/:id', async (req, res) => {
     }
 
     try {
-        const [rows] = await db.query('SELECT * FROM Categories WHERE category_id = ?', [id]);
+        const [rows] = await db.query('SELECT * FROM categories WHERE category_id = ?', [id]);
 
         if (rows.length === 0) {
             return res.status(404).json({ error: 'Category not found' });
@@ -43,11 +43,11 @@ router.post('/', async (req, res) => {
 
     try {
         const [result] = await db.query(
-            'INSERT INTO Categories (category_name, description) VALUES (?, ?)',
+            'INSERT INTO categories (category_name, description) VALUES (?, ?)',
             [category_name, description]
         );
 
-        const [newCategory] = await db.query('SELECT * FROM Categories WHERE category_id = ?', [result.insertId]);
+        const [newCategory] = await db.query('SELECT * FROM categories WHERE category_id = ?', [result.insertId]);
         res.status(201).json(newCategory[0]);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -64,7 +64,7 @@ router.put('/:id', async (req, res) => {
     }
 
     try {
-        const [existingCategory] = await db.query('SELECT * FROM Categories WHERE category_id = ?', [id]);
+        const [existingCategory] = await db.query('SELECT * FROM categories WHERE category_id = ?', [id]);
         if (existingCategory.length === 0) {
             return res.status(404).json({ error: 'Category not found' });
         }
@@ -73,11 +73,11 @@ router.put('/:id', async (req, res) => {
         const updatedDescription = description || existingCategory[0].description;
 
         await db.query(
-            `UPDATE Categories SET category_name = ?, description = ? WHERE category_id = ?`,
+            `UPDATE categories SET category_name = ?, description = ? WHERE category_id = ?`,
             [updatedCategoryName, updatedDescription, id]
         );
 
-        const [updatedCategory] = await db.query('SELECT * FROM Categories WHERE category_id = ?', [id]);
+        const [updatedCategory] = await db.query('SELECT * FROM categories WHERE category_id = ?', [id]);
         res.status(200).json({
             message: 'Category updated successfully',
             category: updatedCategory[0],
@@ -101,17 +101,17 @@ router.patch('/:id/status', async (req, res) => {
     }
 
     try {
-        const [existingCategory] = await db.query('SELECT * FROM Categories WHERE category_id = ?', [id]);
+        const [existingCategory] = await db.query('SELECT * FROM categories WHERE category_id = ?', [id]);
         if (existingCategory.length === 0) {
             return res.status(404).json({ error: 'Category not found' });
         }
 
         await db.query(
-            `UPDATE Categories SET is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE category_id = ?`,
+            `UPDATE categories SET is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE category_id = ?`,
             [is_active, id]
         );
 
-        const [updatedCategory] = await db.query('SELECT * FROM Categories WHERE category_id = ?', [id]);
+        const [updatedCategory] = await db.query('SELECT * FROM categories WHERE category_id = ?', [id]);
         res.status(200).json({
             message: `Category status updated successfully to ${is_active ? 'active' : 'inactive'}`,
             category: updatedCategory[0],
