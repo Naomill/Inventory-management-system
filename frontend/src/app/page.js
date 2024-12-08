@@ -12,6 +12,9 @@ const HomePage = () => {
                 <Link href="/customers" className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
                     Go to Customers
                 </Link>
+                <Link href="/exportOrder" className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                    Go to Customers
+                </Link>
             </div>
         </div>
     );
