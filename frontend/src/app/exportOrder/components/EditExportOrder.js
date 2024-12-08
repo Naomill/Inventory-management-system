@@ -7,15 +7,14 @@ const EditExportOrder = ({ exportOrder, onClose, onSave }) => {
     if (exportOrder) {
       return {
         product_name: exportOrder.product_name || "",
-        quantity: exportOrder.quantity || 0,
+        quantity: exportOrder.quantity || "",
         order_date: exportOrder.order_date || "",
         shipping_date: exportOrder.shipping_date || "",
         shipping_address: exportOrder.shipping_address || "",
         shipping_status: exportOrder.shipping_status || "",
-        transaction_status: exportOrder.transaction_status || "",
-        subtotal: exportOrder.subtotal || 0,
-        total_amount: exportOrder.total_amount || 0,
-        status: exportOrder.status || 0, // Active or Inactive
+        subtotal: exportOrder.subtotal || "",
+        total_amount: exportOrder.total_amount || "",
+        status: "Pending", // Set status to "Pending"
       };
     }
     return {}; // Return an empty object if exportOrder is undefined
@@ -29,15 +28,14 @@ const EditExportOrder = ({ exportOrder, onClose, onSave }) => {
     if (exportOrder) {
       setFormData({
         product_name: exportOrder.product_name || "",
-        quantity: exportOrder.quantity || 0,
+        quantity: exportOrder.quantity || "",
         order_date: exportOrder.order_date || "",
         shipping_date: exportOrder.shipping_date || "",
         shipping_address: exportOrder.shipping_address || "",
         shipping_status: exportOrder.shipping_status || "",
-        transaction_status: exportOrder.transaction_status || "",
-        subtotal: exportOrder.subtotal || 0,
-        total_amount: exportOrder.total_amount || 0,
-        status: exportOrder.status || 0,
+        subtotal: exportOrder.subtotal || "",
+        total_amount: exportOrder.total_amount || "",
+        status: "Pending", // Ensure status is "Pending"
       });
     }
   }, [exportOrder]); // Re-run when exportOrder prop changes
@@ -92,7 +90,7 @@ const EditExportOrder = ({ exportOrder, onClose, onSave }) => {
             <input
               type="number"
               name="quantity"
-              value={formData.quantity || 0}
+              value={formData.quantity || ""}
               onChange={handleInputChange}
               className="w-full bg-gray-700 text-white p-2 rounded mb-2"
             />
@@ -131,27 +129,19 @@ const EditExportOrder = ({ exportOrder, onClose, onSave }) => {
               onChange={handleInputChange}
               className="w-full bg-gray-700 text-white p-2 rounded mb-2"
             />
-            <label className="text-gray-400">Transaction Status</label>
-            <input
-              type="text"
-              name="transaction_status"
-              value={formData.transaction_status || ""}
-              onChange={handleInputChange}
-              className="w-full bg-gray-700 text-white p-2 rounded mb-2"
-            />
             <label className="text-gray-400">Subtotal</label>
             <input
-              type="number"
+              type="text"
               name="subtotal"
-              value={formData.subtotal || 0}
+              value={formData.subtotal || ""}
               onChange={handleInputChange}
               className="w-full bg-gray-700 text-white p-2 rounded mb-2"
             />
             <label className="text-gray-400">Total Amount</label>
             <input
-              type="number"
+              type="text"
               name="total_amount"
-              value={formData.total_amount || 0}
+              value={formData.total_amount || ""}
               onChange={handleInputChange}
               className="w-full bg-gray-700 text-white p-2 rounded mb-2"
             />
@@ -163,23 +153,12 @@ const EditExportOrder = ({ exportOrder, onClose, onSave }) => {
                 <input
                   type="radio"
                   name="status"
-                  value={1}
-                  checked={formData.status === 1}
-                  onChange={() => handleStatusChange(1)}
+                  value="Pending"
+                  checked={formData.status === "Pending"}
+                  onChange={() => handleStatusChange("Pending")}
                   className="mr-2"
                 />
-                Active
-              </label>
-              <label className="text-white flex items-center">
-                <input
-                  type="radio"
-                  name="status"
-                  value={0}
-                  checked={formData.status === 0}
-                  onChange={() => handleStatusChange(0)}
-                  className="mr-2"
-                />
-                Inactive
+                Pending
               </label>
             </div>
           </div>

@@ -1,149 +1,183 @@
-import { useState } from 'react';
-import API from '../../../../services/api';
+import React, { useState } from "react";
+import API from "../../../../services/api";
 
-const CreateExportOrder = ({ onExportOrderCreated }) => {
-    const [formData, setFormData] = useState({
-        product_name: '',
-        quantity: '',
-        order_date: '',
-        shipping_date: '',
-        shipping_address: '',
-        shipping_status: '',
-        transaction_status: '',
-        subtotal: '',
-        total_amount: '',
-        status: 'active' // ค่าเริ่มต้นเป็น active
-    });
+const CreateExportOrder = ({ onOrderCreated }) => {
+  // สร้าง state สำหรับฟอร์ม
+  const [formData, setFormData] = useState({
+    product_name: "",
+    quantity: "",
+    order_date: "",
+    shipping_date: "",
+    shipping_address: "",
+    shipping_status: "",
+    subtotal: "",
+    total_amount: "",
+    status: "Pending",  // ค่าเริ่มต้น
+  });
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
+  // ฟังก์ชันสำหรับอัพเดตข้อมูลในฟอร์ม
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
-    const handleAddExportOrder = async () => {
-        try {
-            const response = await API.post('/export-orders', formData);
-            onExportOrderCreated(response.data); // ส่งข้อมูลคำสั่งซื้อใหม่กลับไป
-            setFormData({
-                product_name: '',
-                quantity: '',
-                order_date: '',
-                shipping_date: '',
-                shipping_address: '',
-                shipping_status: '',
-                transaction_status: '',
-                subtotal: '',
-                total_amount: '',
-                status: 'active'
-            });
-        } catch (err) {
-            alert(`Error: ${err.message}`);
-        }
-    };
+  // ฟังก์ชันสำหรับบันทึกข้อมูลลง API
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-    return (
+    try {
+      const response = await API.post("/export-orders", formData);
+      // เรียกใช้ฟังก์ชัน onOrderCreated เพื่อรีเฟรชข้อมูล
+      onOrderCreated();
+      alert("Export Order created successfully!");
+      // รีเซ็ตฟอร์มหลังการบันทึกข้อมูล
+      setFormData({
+        product_name: "",
+        quantity: "",
+        order_date: "",
+        shipping_date: "",
+        shipping_address: "",
+        shipping_status: "",
+        subtotal: "",
+        total_amount: "",
+        status: "Pending",
+      });
+    } catch (err) {
+      console.error("Error creating export order:", err);
+      alert("Failed to create export order.");
+    }
+  };
+
+  return (
+    <div className="bg-gray-900 text-white p-6 rounded-lg">
+      <h2 className="text-2xl font-bold mb-4">Create Export Order</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-            <h2 className="text-lg font-bold mb-2">Add New Export Order</h2>
-            <div className="grid grid-cols-2 gap-4 text-black">
-                {/* Product Name */}
-                <input
-                    type="text"
-                    name="product_name"
-                    placeholder="Product Name"
-                    value={formData.product_name}
-                    onChange={handleInputChange}
-                    className="border px-2 py-1"
-                />
-                {/* Quantity */}
-                <input
-                    type="number"
-                    name="quantity"
-                    placeholder="Quantity"
-                    value={formData.quantity}
-                    onChange={handleInputChange}
-                    className="border px-2 py-1"
-                />
-                {/* Order Date */}
-                <input
-                    type="date"
-                    name="order_date"
-                    placeholder="Order Date"
-                    value={formData.order_date}
-                    onChange={handleInputChange}
-                    className="border px-2 py-1"
-                />
-                {/* Shipping Date */}
-                <input
-                    type="date"
-                    name="shipping_date"
-                    placeholder="Shipping Date"
-                    value={formData.shipping_date}
-                    onChange={handleInputChange}
-                    className="border px-2 py-1"
-                />
-                {/* Shipping Address */}
-                <textarea
-                    name="shipping_address"
-                    placeholder="Shipping Address"
-                    value={formData.shipping_address}
-                    onChange={handleInputChange}
-                    className="border px-2 py-1"
-                />
-                {/* Shipping Status */}
-                <input
-                    type="text"
-                    name="shipping_status"
-                    placeholder="Shipping Status"
-                    value={formData.shipping_status}
-                    onChange={handleInputChange}
-                    className="border px-2 py-1"
-                />
-                {/* Transaction Status */}
-                <input
-                    type="text"
-                    name="transaction_status"
-                    placeholder="Transaction Status"
-                    value={formData.transaction_status}
-                    onChange={handleInputChange}
-                    className="border px-2 py-1"
-                />
-                {/* Subtotal */}
-                <input
-                    type="number"
-                    name="subtotal"
-                    placeholder="Subtotal"
-                    value={formData.subtotal}
-                    onChange={handleInputChange}
-                    className="border px-2 py-1"
-                />
-                {/* Total Amount */}
-                <input
-                    type="number"
-                    name="total_amount"
-                    placeholder="Total Amount"
-                    value={formData.total_amount}
-                    onChange={handleInputChange}
-                    className="border px-2 py-1"
-                />
-                {/* Status */}
-                <select
-                    name="status"
-                    value={formData.status}
-                    onChange={handleInputChange}
-                    className="border px-2 py-1"
-                >
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                </select>
-            </div>
-            <button
-                onClick={handleAddExportOrder}
-                className="bg-blue-500 text-white px-4 py-2 mt-4 rounded hover:bg-blue-600 mb-3"
-            >
-                Save Export Order
-            </button>
+          <label className="block">Product Name</label>
+          <input
+            type="text"
+            name="product_name"
+            value={formData.product_name}
+            onChange={handleChange}
+            className="px-4 py-2 rounded bg-gray-800 text-white w-full"
+            required
+          />
         </div>
-    );
+
+        <div>
+          <label className="block">Quantity</label>
+          <input
+            type="number"
+            name="quantity"
+            value={formData.quantity}
+            onChange={handleChange}
+            className="px-4 py-2 rounded bg-gray-800 text-white w-full"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block">Order Date</label>
+          <input
+            type="date"
+            name="order_date"
+            value={formData.order_date}
+            onChange={handleChange}
+            className="px-4 py-2 rounded bg-gray-800 text-white w-full"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block">Shipping Date</label>
+          <input
+            type="date"
+            name="shipping_date"
+            value={formData.shipping_date}
+            onChange={handleChange}
+            className="px-4 py-2 rounded bg-gray-800 text-white w-full"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block">Shipping Address</label>
+          <input
+            type="text"
+            name="shipping_address"
+            value={formData.shipping_address}
+            onChange={handleChange}
+            className="px-4 py-2 rounded bg-gray-800 text-white w-full"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block">Shipping Status</label>
+          <input
+            type="text"
+            name="shipping_status"
+            value={formData.shipping_status}
+            onChange={handleChange}
+            className="px-4 py-2 rounded bg-gray-800 text-white w-full"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block">Subtotal</label>
+          <input
+            type="number"
+            name="subtotal"
+            value={formData.subtotal}
+            onChange={handleChange}
+            className="px-4 py-2 rounded bg-gray-800 text-white w-full"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block">Total Amount</label>
+          <input
+            type="number"
+            name="total_amount"
+            value={formData.total_amount}
+            onChange={handleChange}
+            className="px-4 py-2 rounded bg-gray-800 text-white w-full"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block">Status</label>
+          <select
+            name="status"
+            value={formData.status}
+            onChange={handleChange}
+            className="px-4 py-2 rounded bg-gray-800 text-white w-full"
+            required
+          >
+            <option value="Pending">Pending</option>
+            <option value="Shipped">Shipped</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+        </div>
+
+        <div className="flex justify-end mt-4">
+          <button
+            type="submit"
+            className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded"
+          >
+            Create Order
+          </button>
+        </div>
+      </form>
+    </div>
+  );
 };
 
 export default CreateExportOrder;

@@ -115,13 +115,15 @@ const ExportOrderPage = () => {
             <thead>
               <tr className="bg-gray-800">
                 <th className="border border-gray-700 px-4 py-2">Export Order ID</th>
+                <th className="border border-gray-700 px-4 py-2">Customer ID</th>
+                <th className="border border-gray-700 px-4 py-2">Customer Name</th>
+                <th className="border border-gray-700 px-4 py-2">Product ID</th>
                 <th className="border border-gray-700 px-4 py-2">Product Name</th>
                 <th className="border border-gray-700 px-4 py-2">Quantity</th>
                 <th className="border border-gray-700 px-4 py-2">Order Date</th>
                 <th className="border border-gray-700 px-4 py-2">Shipping Date</th>
                 <th className="border border-gray-700 px-4 py-2">Shipping Address</th>
                 <th className="border border-gray-700 px-4 py-2">Shipping Status</th>
-                <th className="border border-gray-700 px-4 py-2">Transaction Status</th>
                 <th className="border border-gray-700 px-4 py-2">Subtotal</th>
                 <th className="border border-gray-700 px-4 py-2">Total Amount</th>
                 <th className="border border-gray-700 px-4 py-2">Status</th>
@@ -132,13 +134,15 @@ const ExportOrderPage = () => {
               {filteredExportOrders.map((order) => (
                 <tr key={order.export_order_id} className="odd:bg-gray-800 even:bg-gray-700">
                   <td className="border border-gray-700 px-4 py-2">{order.export_order_id}</td>
+                  <td className="border border-gray-700 px-4 py-2">{order.customer_id}</td>
+                  <td className="border border-gray-700 px-4 py-2">{order.customer_name}</td>
+                  <td className="border border-gray-700 px-4 py-2">{order.product_id}</td>
                   <td className="border border-gray-700 px-4 py-2">{order.product_name}</td>
                   <td className="border border-gray-700 px-4 py-2">{order.quantity}</td>
-                  <td className="border border-gray-700 px-4 py-2">{order.order_date}</td>
-                  <td className="border border-gray-700 px-4 py-2">{order.shipping_date}</td>
+                  <td className="border border-gray-700 px-4 py-2">{new Date(order.order_date).toLocaleDateString()}</td>
+                  <td className="border border-gray-700 px-4 py-2">{new Date(order.shipping_date).toLocaleDateString()}</td>
                   <td className="border border-gray-700 px-4 py-2">{order.shipping_address}</td>
                   <td className="border border-gray-700 px-4 py-2">{order.shipping_status}</td>
-                  <td className="border border-gray-700 px-4 py-2">{order.transaction_status}</td>
                   <td className="border border-gray-700 px-4 py-2">{order.subtotal}</td>
                   <td className="border border-gray-700 px-4 py-2">{order.total_amount}</td>
                   <td className="border border-gray-700 px-4 py-2">
