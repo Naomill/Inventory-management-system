@@ -10,8 +10,16 @@ const HomePage = () => {
                     Go to Products
                 </Link>
                 <Link href="/customers" className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
-                    Go to Customers
+                    Go to Suppliers
                 </Link>
+
+                <Link href="/suppliers" className="bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-600">
+                    Go to Suppliers
+                </Link>
+                <Link href="/orders" className="bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-600">
+                    Go to Orders
+                </Link>
+
             </div>
         </div>
     );
