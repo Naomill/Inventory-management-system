@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import ChangeStatusCustomers from "./ChangeStatusCustomers";
 
 const EditCustomers = ({ customer, onClose, onSave }) => {
   const [formData, setFormData] = useState({
@@ -11,13 +12,26 @@ const EditCustomers = ({ customer, onClose, onSave }) => {
     is_active: customer.is_active || 0,
   });
 
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const [newStatus, setNewStatus] = useState(formData.is_active);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSave = () => {
-    onSave(formData); // ส่งข้อมูลที่แก้ไขกลับไปยัง Main Component
+    onSave(formData);
+  };
+
+  const handleStatusChange = (status) => {
+    setNewStatus(status);
+    setIsPopupVisible(true);
+  };
+
+  const confirmStatusChange = () => {
+    setFormData((prev) => ({ ...prev, is_active: newStatus }));
+    setIsPopupVisible(false);
   };
 
   return (
@@ -34,7 +48,6 @@ const EditCustomers = ({ customer, onClose, onSave }) => {
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          {/* Left Section */}
           <div>
             <label className="text-gray-400">Customer Name</label>
             <input
@@ -44,7 +57,6 @@ const EditCustomers = ({ customer, onClose, onSave }) => {
               onChange={handleInputChange}
               className="w-full bg-gray-700 text-white p-2 rounded mb-2"
             />
-
             <label className="text-gray-400">Contact Name</label>
             <input
               type="text"
@@ -53,7 +65,6 @@ const EditCustomers = ({ customer, onClose, onSave }) => {
               onChange={handleInputChange}
               className="w-full bg-gray-700 text-white p-2 rounded mb-2"
             />
-
             <label className="text-gray-400">Phone</label>
             <input
               type="text"
@@ -63,8 +74,6 @@ const EditCustomers = ({ customer, onClose, onSave }) => {
               className="w-full bg-gray-700 text-white p-2 rounded mb-2"
             />
           </div>
-
-          {/* Right Section */}
           <div>
             <label className="text-gray-400">E-mail</label>
             <input
@@ -74,7 +83,6 @@ const EditCustomers = ({ customer, onClose, onSave }) => {
               onChange={handleInputChange}
               className="w-full bg-gray-700 text-white p-2 rounded mb-2"
             />
-
             <label className="text-gray-400">Address</label>
             <textarea
               name="address"
@@ -82,7 +90,6 @@ const EditCustomers = ({ customer, onClose, onSave }) => {
               onChange={handleInputChange}
               className="w-full bg-gray-700 text-white p-2 rounded mb-2"
             ></textarea>
-
             <label className="block text-gray-400 mb-1 text-sm">
               Status <span className="text-red-500">*Important</span>
             </label>
@@ -93,7 +100,7 @@ const EditCustomers = ({ customer, onClose, onSave }) => {
                   name="is_active"
                   value={1}
                   checked={formData.is_active === 1}
-                  onChange={() => setFormData((prev) => ({ ...prev, is_active: 1 }))}
+                  onChange={() => handleStatusChange(1)}
                   className="mr-2"
                 />
                 Active
@@ -104,7 +111,7 @@ const EditCustomers = ({ customer, onClose, onSave }) => {
                   name="is_active"
                   value={0}
                   checked={formData.is_active === 0}
-                  onChange={() => setFormData((prev) => ({ ...prev, is_active: 0 }))}
+                  onChange={() => handleStatusChange(0)}
                   className="mr-2"
                 />
                 Inactive
@@ -128,6 +135,13 @@ const EditCustomers = ({ customer, onClose, onSave }) => {
           </button>
         </div>
       </div>
+
+      <ChangeStatusCustomers
+        isOpen={isPopupVisible}
+        onClose={() => setIsPopupVisible(false)}
+        onConfirm={confirmStatusChange}
+        status={newStatus}
+      />
     </div>
   );
 };
