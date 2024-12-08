@@ -56,7 +56,7 @@ router.post('/', async (req, res) => {
 // Update a supplier by Id
 router.put('/:id', async (req, res) => {
     const { id } = req.params;
-    const { supplier_name, contact_name, phone, email, address } = req.body;
+    const { supplier_name, contact_name, phone, email, address, is_active } = req.body;
 
     if (!id || isNaN(id)) {
         return res.status(400).json({ error: 'Invalid ID format' });
@@ -73,47 +73,13 @@ router.put('/:id', async (req, res) => {
         }
 
         await db.query(
-            `UPDATE supplier SET supplier_name = ?, contact_name = ?, phone = ?, email = ?, address = ? WHERE supplier_id = ?`,
-            [supplier_name, contact_name, phone, email, address, id]
+            `UPDATE supplier SET supplier_name = ?, contact_name = ?, phone = ?, email = ?, address = ?, is_active = ? WHERE supplier_id = ?`,
+            [supplier_name, contact_name, phone, email, address, is_active, id]
         );
 
         const [updatedSupplier] = await db.query('SELECT * FROM supplier WHERE supplier_id = ?', [id]);
         res.status(200).json({
             message: 'Supplier updated successfully',
-            supplier: updatedSupplier[0],
-        });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// Change status of supplier by Id
-router.patch('/:id/status', async (req, res) => {
-    const { id } = req.params;
-    const { is_active } = req.body;
-
-    if (!id || isNaN(id)) {
-        return res.status(400).json({ error: 'Invalid ID format' });
-    }
-
-    if (typeof is_active !== 'boolean') {
-        return res.status(400).json({ error: 'Invalid is_active value. Must be true or false' });
-    }
-
-    try {
-        const [existingSupplier] = await db.query('SELECT * FROM supplier WHERE supplier_id = ?', [id]);
-        if (existingSupplier.length === 0) {
-            return res.status(404).json({ error: 'Supplier not found' });
-        }
-
-        await db.query(
-            `UPDATE supplier SET is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE supplier_id = ?`,
-            [is_active, id]
-        );
-
-        const [updatedSupplier] = await db.query('SELECT * FROM supplier WHERE supplier_id = ?', [id]);
-        res.status(200).json({
-            message: `Supplier status updated successfully to ${is_active ? 'active' : 'inactive'}`,
             supplier: updatedSupplier[0],
         });
     } catch (err) {

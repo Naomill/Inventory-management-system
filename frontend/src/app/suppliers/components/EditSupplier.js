@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import ChangeStatusSupplier from "./ChangeStatusSupplier"; // ใช้ ChangeStatusSupplier เพื่อการยืนยันสถานะ
+import API from '../../../../services/api';
 
 const EditSupplier = ({ supplier, onClose, onSave }) => {
   const [formData, setFormData] = useState({
@@ -12,26 +12,31 @@ const EditSupplier = ({ supplier, onClose, onSave }) => {
     is_active: supplier.is_active || 0,
   });
 
-  const [isPopupVisible, setIsPopupVisible] = useState(false);
-  const [newStatus, setNewStatus] = useState(formData.is_active); // สถานะที่ผู้ใช้เลือก
+const handleInputChange = (e) => {
+  const { name, value } = e.target;
+  setFormData((prev) => ({
+      ...prev,
+      [name]: name === "is_active" ? Number(value) : value, // แปลง is_active เป็นตัวเลข
+  }));
+};
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  const handleSave = async () => {
+    try {
+        console.log("Sending data to API:", formData);
 
-  const handleSave = () => {
-    onSave(formData); // ส่งข้อมูลที่แก้ไขกลับไปยัง Main Component
-  };
+        const response = await API.put(`/supplier/${formData.supplier_id}`, formData);
 
-  const handleStatusChange = (status) => {
-    setNewStatus(status);
-    setIsPopupVisible(true); // เปิดหน้าต่างยืนยันสถานะ
-  };
-
-  const confirmStatusChange = () => {
-    setFormData((prev) => ({ ...prev, is_active: newStatus }));
-    setIsPopupVisible(false); // ปิดหน้าต่าง popup
+        if (response.status === 200) {
+            alert("Supplier updated successfully");
+            onSave(formData); // เรียก onSave พร้อมส่งข้อมูลที่แก้ไขกลับไป
+        } else {
+            console.error("Error response:", response.data);
+            alert("Failed to update supplier.");
+        }
+    } catch (error) {
+        console.error("Error updating supplier:", error);
+        alert("Failed to update supplier.");
+    }
   };
 
   return (
@@ -107,7 +112,7 @@ const EditSupplier = ({ supplier, onClose, onSave }) => {
                   name="is_active"
                   value={1}
                   checked={formData.is_active === 1}
-                  onChange={() => handleStatusChange(1)} // เปลี่ยนสถานะเป็น Active
+                  onChange={handleInputChange} // เปลี่ยนสถานะเป็น Active
                   className="mr-2"
                 />
                 Active
@@ -118,7 +123,7 @@ const EditSupplier = ({ supplier, onClose, onSave }) => {
                   name="is_active"
                   value={0}
                   checked={formData.is_active === 0}
-                  onChange={() => handleStatusChange(0)} // เปลี่ยนสถานะเป็น Inactive
+                  onChange={handleInputChange} // เปลี่ยนสถานะเป็น Inactive
                   className="mr-2"
                 />
                 Inactive
@@ -142,13 +147,6 @@ const EditSupplier = ({ supplier, onClose, onSave }) => {
           </button>
         </div>
       </div>
-
-      <ChangeStatusSupplier
-        isOpen={isPopupVisible}
-        onClose={() => setIsPopupVisible(false)}
-        onConfirm={confirmStatusChange} // อัปเดตสถานะเมื่อผู้ใช้ยืนยัน
-        status={newStatus}
-      />
     </div>
   );
 };
