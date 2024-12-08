@@ -7,8 +7,7 @@ const CreateCustomers = ({ onCustomerCreated }) => {
         contact_name: '',
         phone: '',
         email: '',
-        address: '',
-        status: 'active' // ค่าเริ่มต้นเป็น active
+        address: ''
     });
 
     const handleInputChange = (e) => {
@@ -25,8 +24,7 @@ const CreateCustomers = ({ onCustomerCreated }) => {
                 contact_name: '',
                 phone: '',
                 email: '',
-                address: '',
-                status: 'active'
+                address: ''
             });
         } catch (err) {
             alert(`Error: ${err.message}`);
@@ -77,15 +75,6 @@ const CreateCustomers = ({ onCustomerCreated }) => {
                     onChange={handleInputChange}
                     className="border px-2 py-1"
                 />
-                <select
-                    name="status"
-                    value={formData.status}
-                    onChange={handleInputChange}
-                    className="border px-2 py-1"
-                >
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                </select>
             </div>
             <button
                 onClick={handleAddCustomer}

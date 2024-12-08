@@ -57,7 +57,7 @@ router.post('/', async (req, res) => {
 // Update a customer by Id
 router.put('/:id', async (req, res) => {
     const { id } = req.params;
-    const { customer_name, contact_name, phone, email, address } = req.body;
+    const { customer_name, contact_name, phone, email, address, is_active } = req.body; // เพิ่ม is_active
 
     // Validation: if Id isn't a number
     if (isNaN(id)) {
@@ -72,53 +72,55 @@ router.put('/:id', async (req, res) => {
 
         await db.query(
             `UPDATE customers
-            SET customer_name = ?, contact_name = ?, phone = ?, email = ?, address = ?
-            WHERE customer_id = ?`,
-            [customer_name, contact_name, phone, email, address, id]
+             SET customer_name = ?, contact_name = ?, phone = ?, email = ?, address = ?, is_active = ?
+             WHERE customer_id = ?`,
+            [customer_name, contact_name, phone, email, address, is_active, id]
         );
 
         res.status(200).json({
             message: 'Customer updated successfully',
-            customer: { id, customer_name, contact_name, phone, email, address },
+            customer: { id, customer_name, contact_name, phone, email, address, is_active },
         });
     } catch (err) {
+        console.error(err.message);
         res.status(500).json({ error: err.message });
     }
 });
 
-// Change status of customer by Id
-router.patch('/:id/status', async (req, res) => {
-    const { id } = req.params;
-    const { is_active } = req.body;
 
-    // Validation: if ID isn't a number
-    if (isNaN(id)) {
-        return res.status(400).json({ error: 'Invalid ID format' });
-    }
+// // Change status of customer by Id
+// router.patch('/:id/status', async (req, res) => {
+//     const { id } = req.params;
+//     const { is_active } = req.body;
 
-    // Validation: is_active must be boolean
-    if (typeof is_active !== 'boolean') {
-        return res.status(400).json({ error: 'Invalid is_active value. Must be true or false' });
-    }
+//     // Validation: if ID isn't a number
+//     if (isNaN(id)) {
+//         return res.status(400).json({ error: 'Invalid ID format' });
+//     }
 
-    try {
-        const [existingCustomer] = await db.query('SELECT * FROM customers WHERE customer_id = ?', [id]);
-        if (existingCustomer.length === 0) {
-            return res.status(404).json({ error: 'Customer not found' });
-        }
+//     // Validation: is_active must be boolean
+//     if (typeof is_active !== 'boolean') {
+//         return res.status(400).json({ error: 'Invalid is_active value. Must be true or false' });
+//     }
 
-        await db.query(
-            `UPDATE customers SET is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE customer_id = ?`,
-            [is_active, id]
-        );
+//     try {
+//         const [existingCustomer] = await db.query('SELECT * FROM customers WHERE customer_id = ?', [id]);
+//         if (existingCustomer.length === 0) {
+//             return res.status(404).json({ error: 'Customer not found' });
+//         }
 
-        res.status(200).json({
-            message: `Customer status updated successfully to ${is_active ? 'active' : 'inactive'}`,
-            customer: { id, is_active },
-        });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
+//         await db.query(
+//             `UPDATE customers SET is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE customer_id = ?`,
+//             [is_active, id]
+//         );
+
+//         res.status(200).json({
+//             message: `Customer status updated successfully to ${is_active ? 'active' : 'inactive'}`,
+//             customer: { id, is_active },
+//         });
+//     } catch (err) {
+//         res.status(500).json({ error: err.message });
+//     }
+// });
 
 module.exports = router;
