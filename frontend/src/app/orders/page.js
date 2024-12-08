@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from "react";
 import API from "../../../services/api";
-// import CreateOrder from './components/CreateOrder';
+import CreateOrder from './components/CreateOrder';
 import ViewOrder from './components/ViewOrder';
 import EditOrder from "./components/EditOrder";
 
 const OrdersPage = () => {
-  const [Orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -47,7 +47,7 @@ const OrdersPage = () => {
         order.order_id.toString().includes(searchTerm.trim())
     );
     setFilteredOrders(searchResults);
-  }, [searchTerm, orders]);
+  }, [searchTerm,orders]);
 
   // อัปเดต searchTerm เมื่อผู้ใช้กรอกข้อมูลในช่องค้นหา
   const handleSearch = (event) => {
@@ -61,7 +61,7 @@ const OrdersPage = () => {
   const handleSaveEdit = async (updatedOrder) => {
     try {
       // เรียก API เพื่ออัปเดตข้อมูลในฐานข้อมูล
-      await API.put(`/order/${updatedOrder.order_id}`, updatedOrder);
+      await API.put(`/orders/${updatedOrder.order_id}`, updatedOrder);
   
       // อัปเดต state ใน React หลังจากบันทึกสำเร็จ
       const updatedOrders = orders.map((sup) =>
@@ -81,7 +81,7 @@ const OrdersPage = () => {
 
  // ฟังก์ชันรีเฟรชข้อมูล
  const refreshData = async () => {
-  const response = await API.get("/order");
+  const response = await API.get("/orders");
   setOrders(response.data);
 };
 
@@ -130,6 +130,7 @@ const OrdersPage = () => {
                 <th className="border border-gray-700 px-4 py-2">Subtotal</th>
                 <th className="border border-gray-700 px-4 py-2">Total Amount</th>
                 <th className="border border-gray-700 px-4 py-2">Status</th>
+                <th className="border border-gray-700 px-4 py-2">Action</th>
               </tr>
             </thead>
             <tbody>

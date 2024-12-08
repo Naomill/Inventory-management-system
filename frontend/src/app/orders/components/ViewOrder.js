@@ -17,10 +17,10 @@ const ViewOrder = ({ order, onClose, onEdit }) => {
         <div className="grid grid-cols-2 gap-4">
           {/* ซ้าย */}
           <div>
-            <label className="text-gray-400">Supplier ID</label>
+            <label className="text-gray-400">Order ID</label>
             <input
               type="text"
-              value={order.supplier.id || "N/A"}
+              value={order.supplier_id || "N/A"}
               disabled
               className="w-full bg-gray-700 text-white p-2 rounded mb-2"
             />
