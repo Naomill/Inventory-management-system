@@ -6,10 +6,10 @@ const ChangeStatusCustomers = ({ isOpen, onClose, onConfirm, status }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-60">
       <div className="bg-gray-800 rounded-lg shadow-lg p-6 w-1/3">
-        <h3 className="text-lg font-bold text-white mb-4">
+        <h3 className="text-lg font-bold text-white mb-4 mt-4 text-center" >
           Change status of this product?
         </h3>
-        <p className="text-gray-400 mb-4">
+        <p className="text-gray-400 mb-6 text-center">
           If you click “Confirm”, this product will be{" "}
           {status === 0 ? "deactivated" : "activated"}.
         </p>
