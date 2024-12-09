@@ -1,56 +1,48 @@
 import React, { useState, useEffect } from "react";
-import API from "../../../../services/api"; // Make sure this is correctly importing your API service
-import ChangeStatusExportOrder from "./ChangeStatusExportOrder"; // Component to handle status change popup
+import API from "../../../../services/api";
+import ChangeStatusExportOrder from "./ChangeStatusExportOrder";
 
 const EditExportOrder = ({ exportOrder, onClose, onSave }) => {
   const [formData, setFormData] = useState({
-    export_order_id: exportOrder.export_order_id,
-    customer_id: exportOrder.customer_id || "",
-    customer_name: exportOrder.customer_name || "",
-    product_id: exportOrder.product_id || "",
-    product_name: exportOrder.product_name || "",
-    order_date: exportOrder.order_date || "",
-    shipping_date: exportOrder.shipping_date || "",
-    shipping_address: exportOrder.shipping_address || "",
-    shipping_status: exportOrder.shipping_status || "",
-    quantity: exportOrder.quantity || "",
-    subtotal: exportOrder.subtotal || "",
-    total_amount: exportOrder.total_amount || "",
-    status: exportOrder.status || 0,
+    export_order_id: "",
+    customer_id: "",
+    customer_name: "",
+    product_id: "",
+    product_name: "",
+    order_date: "",
+    shipping_date: "",
+    shipping_address: "",
+    shipping_status: "",
+    quantity: "",
+    subtotal: "",
+    total_amount: "",
+    status: "",
   });
+
   const [isPopupVisible, setIsPopupVisible] = useState(false);
-  const [newStatus, setNewStatus] = useState("Pending");
+  const [newStatus, setNewStatus] = useState("");
 
-  // Fetch the export order data from API when the component mounts
+  // Initialize formData when exportOrder changes
   useEffect(() => {
-    const fetchExportOrder = async () => {
-      try {
-        const response = await API.get(`/export-orders/${exportOrderId}`);
-        setFormData(response.data);
-        setNewStatus(response.data.status || "Pending"); // Initialize newStatus
-      } catch (error) {
-        console.error("Error fetching export order:", error);
-        alert("Failed to fetch export order.");
-      }
-    };
-
-    if (exportOrderId) {
-      fetchExportOrder();
+    if (exportOrder) {
+      setFormData({ ...exportOrder });
+      setNewStatus(exportOrder.status || "Pending");
     }
-  }, [exportOrderId]);
+  }, [exportOrder]);
 
-  // Handle input change
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle save changes
   const handleSave = async () => {
     try {
       const updatedData = { ...formData, status: newStatus };
-      const response = await API.put(`/export-orders/${exportOrderId}`, updatedData);
-      onSave(response.data); // Pass updated data to parent component
+      const response = await API.put(
+        `/export-orders/${formData.export_order_id}`,
+        updatedData
+      );
+      onSave(response.data);
       alert("Export Order updated successfully!");
       onClose();
     } catch (error) {
@@ -59,15 +51,14 @@ const EditExportOrder = ({ exportOrder, onClose, onSave }) => {
     }
   };
 
-  // Handle status change popup visibility
   const handleStatusChange = (status) => {
-    setNewStatus(status); // Update newStatus
+    setNewStatus(status);
     setIsPopupVisible(true);
   };
 
   const confirmStatusChange = () => {
-    setFormData((prev) => ({ ...prev, status: newStatus })); // Update formData with newStatus
-    setIsPopupVisible(false); // Close popup
+    setFormData((prev) => ({ ...prev, status: newStatus }));
+    setIsPopupVisible(false);
   };
 
   return (
@@ -84,7 +75,7 @@ const EditExportOrder = ({ exportOrder, onClose, onSave }) => {
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          {/* Left side */}
+          {/* Left Form Fields */}
           <div>
             <label className="text-gray-400">Customer ID</label>
             <input
@@ -119,7 +110,7 @@ const EditExportOrder = ({ exportOrder, onClose, onSave }) => {
             ></textarea>
           </div>
 
-          {/* Right side */}
+          {/* Right Form Fields */}
           <div>
             <label className="text-gray-400">Shipping Date</label>
             <input
@@ -153,9 +144,7 @@ const EditExportOrder = ({ exportOrder, onClose, onSave }) => {
               onChange={handleInputChange}
               className="w-full bg-gray-700 text-white p-2 rounded mb-2"
             />
-            <label className="block text-gray-400 mb-1 text-sm">
-              Status <span className="text-red-500">*Important</span>
-            </label>
+            <label className="text-gray-400">Status</label>
             <div className="flex items-center space-x-4">
               {["Pending", "Shipped", "Completed"].map((status) => (
                 <label key={status} className="text-white flex items-center">
@@ -190,7 +179,6 @@ const EditExportOrder = ({ exportOrder, onClose, onSave }) => {
         </div>
       </div>
 
-      {/* Status Change Popup */}
       <ChangeStatusExportOrder
         isOpen={isPopupVisible}
         onClose={() => setIsPopupVisible(false)}
