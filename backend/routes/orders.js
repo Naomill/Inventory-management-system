@@ -65,35 +65,31 @@ router.get('/:id', async (req, res) => {
 });
 
 // Create a new order
-router.post('/', async (req, res) => {
-    const { supplier_id, product_id, quantity, subtotal, total_amount, status } = req.body;
+router.post('/products', async (req, res) => {
+    const { product_name, sku, category_id, description, quantity, unit_price } = req.body;
 
-    if (!supplier_id || !product_id || !quantity || !subtotal || !total_amount) {
-        return res.status(400).json({ error: 'Missing required fields' });
+    // ตรวจสอบว่าฟิลด์ที่สำคัญทั้งหมดมีค่าและประเภทข้อมูลถูกต้อง
+    if (!product_name || !sku || !category_id || !quantity || !unit_price) {
+        return res.status(400).json({ error: "All fields are required" });
     }
 
     try {
-        const [supplierExists] = await db.query('SELECT * FROM supplier WHERE supplier_id = ?', [supplier_id]);
-        const [productExists] = await db.query('SELECT * FROM products WHERE product_id = ?', [product_id]);
+        const result = await db.query(
+            'INSERT INTO Products (product_name, sku, category_id, description, quantity, unit_price) VALUES (?, ?, ?, ?, ?, ?)',
+            [product_name, sku, category_id, description, quantity, unit_price]
+        );
 
-        if (supplierExists.length === 0) {
-            return res.status(400).json({ error: 'Invalid supplier_id. Supplier does not exist' });
-        }
-        if (productExists.length === 0) {
-            return res.status(400).json({ error: 'Invalid product_id. Product does not exist' });
-        }
-
-        const [result] = await db.query(`
-            INSERT INTO orders (supplier_id, product_id, quantity, subtotal, total_amount, status)
-            VALUES (?, ?, ?, ?, ?, ?)
-        `, [supplier_id, product_id, quantity, subtotal, total_amount, status || 'Pending']);
-
-        const [newOrder] = await db.query('SELECT * FROM orders WHERE order_id = ?', [result.insertId]);
-        res.status(201).json(newOrder[0]);
+        res.status(201).json({
+            success: true,
+            product_id: result.insertId,
+            message: "Product added successfully",
+        });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error("Error inserting product:", err);
+        res.status(500).json({ error: "Failed to add product" });
     }
 });
+
 
 // Update an order by ID
 router.put('/:id', async (req, res) => {

@@ -5,18 +5,14 @@ import Navbar from "./components/Navbar";
 import CreateProduct from "./components/CreateProduct";
 import EditProduct from "./components/EditProduct";
 import { getProducts, createProduct, updateProductStatus } from "../../../services/products";
-import {updatedProduct} from "../../../services/products";
-import API from "../../../services/api";
-
-
 
 const ProductsPage = () => {
     const [products, setProducts] = useState([]);
     const [showAddForm, setShowAddForm] = useState(false);
-    const [searchTerm, setSearchTerm] = useState("")    ;
+    const [searchTerm, setSearchTerm] = useState("");
     const [showPopup, setShowPopup] = useState(false);
     const [productToUpdate, setProductToUpdate] = useState(null);
-    const [productToEdit, setProductToEdit] = useState(null);
+    const [productToEdit, setProductToEdit] = useState(null); // Manage product being edited
 
     // Fetch products from the backend
     useEffect(() => {
@@ -87,30 +83,15 @@ const ProductsPage = () => {
     };
 
     // Handle product edit save
-    const handleProductEdited = async (updatedProduct) => {
-        try {
-            console.log("Sending payload to API:", updatedProduct);
-    
-            const response = await API.put(`/products/${updatedProduct.product_id}`, updatedProduct);
-    
-            console.log("Response from API:", response.data);
-    
-            // อัปเดต state หลังจากแก้ไขสำเร็จ
-            setProducts((prevProducts) =>
-                prevProducts.map((p) =>
-                    p.product_id === updatedProduct.product_id ? response.data.product : p
-                )
-            );
-    
-            alert("Product updated successfully!");
-            setProductToEdit(null);
-        } catch (err) {
-            console.error("Error updating product:", err.response ? err.response.data : err.message);
-            alert("Failed to update product. Please try again.");
-        }
+    const handleProductEdited = (updatedProduct) => {
+        setProducts((prevProducts) =>
+            prevProducts.map((p) =>
+                p.product_id === updatedProduct.product_id ? updatedProduct : p
+            )
+        );
+        setProductToEdit(null);
     };
-    
-    
+
 
     // Filter products by search term
     const filteredProducts = products.filter((product) =>
@@ -235,9 +216,8 @@ const ProductsPage = () => {
                     <EditProduct
                         product={productToEdit}
                         onClose={() => setProductToEdit(null)} // ฟังก์ชันปิดฟอร์ม
-                        onSave={handleProductEdited} // ฟังก์ชันแก้ไข
+                        onSave={handleProductEdited} // ฟังก์ชันที่จัดการการบันทึกการแก้ไข
                     />
-
                 )}
             </div>
         </div>

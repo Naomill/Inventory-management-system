@@ -22,11 +22,12 @@ router.get('/', async (req, res) => {
         `);
         res.json(rows);
     } catch (err) {
+        console.error("Error fetching products:", err.message);
         res.status(500).json({ error: err.message });
     }
 });
 
-// Show a product by Id
+// Show a product by ID
 router.get('/:id', async (req, res) => {
     const { id } = req.params;
 
@@ -83,7 +84,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Update a product by Id
+// Update a product by ID
 router.put('/:id', async (req, res) => {
     const { id } = req.params;
     const { product_name, sku, category_id, description, quantity, unit_price } = req.body;
@@ -118,7 +119,9 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// Change status of product by Id
+
+
+// Change status of product by ID
 router.patch('/:id/status', async (req, res) => {
     const { id } = req.params;
     const { is_active } = req.body;
@@ -138,7 +141,7 @@ router.patch('/:id/status', async (req, res) => {
         }
 
         await db.query(
-            `UPDATE products SET is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE product_id = ?`,
+            'UPDATE products SET is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE product_id = ?',
             [is_active, id]
         );
 
