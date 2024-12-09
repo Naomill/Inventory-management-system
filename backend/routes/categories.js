@@ -57,7 +57,7 @@ router.post('/', async (req, res) => {
 // Update a category by Id
 router.put('/:id', async (req, res) => {
     const { id } = req.params;
-    const { category_name, description } = req.body;
+    const { category_name, description, is_active } = req.body;
 
     if (!id || isNaN(id)) {
         return res.status(400).json({ error: 'Invalid ID format' });
@@ -73,8 +73,8 @@ router.put('/:id', async (req, res) => {
         const updatedDescription = description || existingCategory[0].description;
 
         await db.query(
-            `UPDATE categories SET category_name = ?, description = ? WHERE category_id = ?`,
-            [updatedCategoryName, updatedDescription, id]
+            `UPDATE categories SET category_name = ?, description = ?, is_active = ? WHERE category_id = ?`,
+            [updatedCategoryName, updatedDescription, is_active, id]
         );
 
         const [updatedCategory] = await db.query('SELECT * FROM categories WHERE category_id = ?', [id]);
@@ -87,38 +87,27 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// Change status of category by Id
-router.patch('/:id/status', async (req, res) => {
+// Delete a category by ID
+router.delete('/:id', async (req, res) => {
     const { id } = req.params;
-    const { is_active } = req.body;
 
     if (!id || isNaN(id)) {
         return res.status(400).json({ error: 'Invalid ID format' });
     }
 
-    if (typeof is_active !== 'boolean') {
-        return res.status(400).json({ error: 'Invalid is_active value. Must be true or false' });
-    }
-
     try {
-        const [existingCategory] = await db.query('SELECT * FROM categories WHERE category_id = ?', [id]);
-        if (existingCategory.length === 0) {
+        const [result] = await db.query('DELETE FROM categories WHERE category_id = ?', [id]);
+
+        if (result.affectedRows === 0) {
             return res.status(404).json({ error: 'Category not found' });
         }
 
-        await db.query(
-            `UPDATE categories SET is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE category_id = ?`,
-            [is_active, id]
-        );
-
-        const [updatedCategory] = await db.query('SELECT * FROM categories WHERE category_id = ?', [id]);
-        res.status(200).json({
-            message: `Category status updated successfully to ${is_active ? 'active' : 'inactive'}`,
-            category: updatedCategory[0],
-        });
+        res.status(200).json({ message: 'Category deleted successfully!' });
     } catch (err) {
+        console.error("Error deleting category:", err.message);
         res.status(500).json({ error: err.message });
     }
 });
+
 
 module.exports = router;

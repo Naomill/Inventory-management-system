@@ -19,12 +19,17 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+      <html lang="en">
+          <head>
+              {/* เพิ่ม Material Icons */}
+              <link
+                  href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined"
+                  rel="stylesheet"
+              />
+          </head>
+          <body className="bg-gray-100 text-gray-800">
+              {children}
+          </body>
+      </html>
   );
 }

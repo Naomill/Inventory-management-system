@@ -1,18 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Navbar from "../sideBar/Navbar";
+import Navbar from "./components/Navbar";
+import CreateProduct from "./components/CreateProduct";
 import EditProduct from "./components/EditProduct";
-import CreateProductPopup from "./components/CreateProduct";
-import { getProducts, createProduct, updateProductStatus, updateProduct } from "../../../services/products";
+import { getProducts, createProduct, updateProductStatus } from "../../../services/products";
 
 const ProductsPage = () => {
     const [products, setProducts] = useState([]);
     const [showAddForm, setShowAddForm] = useState(false);
-    const [searchTerm, setSearchTerm] = useState("")    ;
+    const [searchTerm, setSearchTerm] = useState("");
     const [showPopup, setShowPopup] = useState(false);
     const [productToUpdate, setProductToUpdate] = useState(null);
-    const [productToEdit, setProductToEdit] = useState(null);
+    const [productToEdit, setProductToEdit] = useState(null); // Manage product being edited
 
     // Fetch products from the backend
     useEffect(() => {
@@ -27,19 +27,17 @@ const ProductsPage = () => {
         fetchProducts();
     }, []);
 
+    // Handle product creation
     const handleProductCreated = async (newProduct) => {
         try {
-            console.log("Sending new product:", newProduct); // ดูข้อมูลก่อนส่ง
             const createdProduct = await createProduct(newProduct);
-            console.log("Created product:", createdProduct); // ดูผลลัพธ์จาก API
-            alert("Product created successfully!");
-            window.location.reload(); // รีเฟรชหน้าใหม่หลังสร้างเสร็จ
+            setProducts([...products, createdProduct].sort((a, b) => a.product_id - b.product_id));
+            setShowAddForm(false);
         } catch (err) {
-            console.error("Error creating product:", err.message || err);
-            alert("Failed to create product. Please try again.");
+            console.error("Error creating product:", err);
         }
     };
-    
+
     // Handle status button click
     const handleStatusClick = (product) => {
         setProductToUpdate(product);
@@ -85,34 +83,15 @@ const ProductsPage = () => {
     };
 
     // Handle product edit save
-    const handleProductEdited = async (updatedProduct) => {
-        try {
-            console.log("Sending payload to API:", updatedProduct);
-    
-            // เรียกใช้ฟังก์ชัน updateProduct จาก services/products.js
-            const response = await updateProduct(updatedProduct.product_id, updatedProduct);
-    
-            console.log("Response from API:", response);
-    
-            // อัปเดต State หลังจากแก้ไขสำเร็จ
-            setProducts((prevProducts) =>
-                prevProducts.map((p) =>
-                    p.product_id === updatedProduct.product_id ? response.product : p
-                )
-            );
-    
-            alert("Product updated successfully!");
-            setProductToEdit(null);
-                        
-            // Reload the page to reflect changes
-            window.location.reload();
-        } catch (err) {
-            console.error("Error updating product:", err.response ? err.response.data : err.message);
-            alert("Failed to update product. Please try again.");
-        }
+    const handleProductEdited = (updatedProduct) => {
+        setProducts((prevProducts) =>
+            prevProducts.map((p) =>
+                p.product_id === updatedProduct.product_id ? updatedProduct : p
+            )
+        );
+        setProductToEdit(null);
     };
 
-    
 
     // Filter products by search term
     const filteredProducts = products.filter((product) =>
@@ -134,6 +113,8 @@ const ProductsPage = () => {
                     </button>
                 </div>
 
+                {/* Add Product Form */}
+                {showAddForm && <CreateProduct onProductCreated={handleProductCreated} />}
 
                 {/* Search Bar */}
                 <div className="mb-4 flex items-center">
@@ -144,6 +125,9 @@ const ProductsPage = () => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="bg-gray-800 text-gray-300 px-4 py-2 rounded-l focus:outline-none focus:ring focus:ring-gray-700 w-1/3"
                     />
+                    <button className="bg-gray-700 text-gray-300 px-4 py-2 rounded-r hover:bg-gray-600">
+                        Search
+                    </button>
                 </div>
 
                 {/* Product Table */}
@@ -226,22 +210,14 @@ const ProductsPage = () => {
                         </div>
                     </div>
                 )}
-                {/* Create Product Form */}
-                {showAddForm && (
-                    <CreateProductPopup
-                        onClose={() => setShowAddForm(false)}
-                        onSave={handleProductCreated}
-                    />
-                )}
 
                 {/* Edit Product Form */}
                 {productToEdit && (
                     <EditProduct
                         product={productToEdit}
                         onClose={() => setProductToEdit(null)} // ฟังก์ชันปิดฟอร์ม
-                        onSave={handleProductEdited} // ฟังก์ชันแก้ไข
+                        onSave={handleProductEdited} // ฟังก์ชันที่จัดการการบันทึกการแก้ไข
                     />
-
                 )}
             </div>
         </div>
