@@ -7,7 +7,7 @@ const CreateExportOrder = ({ onExportOrderCreated }) => {
         customer_id: '',
         shipping_data: '',
         shippiing_address: '',
-        shippiing_status: '',
+        shippiing_status: 'Pending',
         product_id: '',
         quantity: '',
         subtotal: '',
@@ -28,7 +28,7 @@ const CreateExportOrder = ({ onExportOrderCreated }) => {
                 customer_id: '',
                 shipping_data: '',
                 shippiing_address: '',
-                shippiing_status: '',
+                shippiing_status: 'Pending',
                 product_id: '',
                 quantity: '',
                 subtotal: '',
@@ -43,7 +43,7 @@ const CreateExportOrder = ({ onExportOrderCreated }) => {
 
     return (
         <div>
-            <h2 className="text-lg font-bold mb-2">Add New EXpoer Order</h2>
+            <h2 className="text-lg font-bold mb-2">Add New Expoer Order</h2>
             <div className="grid grid-cols-2 gap-4 text-black">
                 <input
                     type="number"
@@ -119,7 +119,7 @@ const CreateExportOrder = ({ onExportOrderCreated }) => {
                 <select
                     id="shipping_status"
                     name="shipping_status"
-                    value={formData.shipping_status}
+                    value={formData.shippiing_status}
                     onChange={handleInputChange}
                     className="inline-block  p-2 rounded"
                 >
