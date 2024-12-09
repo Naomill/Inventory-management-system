@@ -5,9 +5,9 @@ const CreateExportOrder = ({ onExportOrderCreated }) => {
 
     const [formData, setFormData] = useState({
         customer_id: '',
-        shipping_data: '',
-        shippiing_address: '',
-        shippiing_status: 'Pending',
+        shipping_date: '',
+        shipping_address: '',
+        shipping_status: 'Pending',
         product_id: '',
         quantity: '',
         subtotal: '',
@@ -26,9 +26,9 @@ const CreateExportOrder = ({ onExportOrderCreated }) => {
             onExportOrderCreated(response.data); // ส่งข้อมูล export order ใหม่กลับไป
             setFormData({
                 customer_id: '',
-                shipping_data: '',
-                shippiing_address: '',
-                shippiing_status: 'Pending',
+                shipping_date: '',
+                shipping_address: '',
+                shipping_status: 'Pending',
                 product_id: '',
                 quantity: '',
                 subtotal: '',
@@ -89,9 +89,9 @@ const CreateExportOrder = ({ onExportOrderCreated }) => {
 
                 <input
                     type="text"
-                    name="shippiing_address"
+                    name="shipping_address"
                     placeholder="Shipping Address"
-                    value={formData.shippiing_address}
+                    value={formData.shipping_address}
                     onChange={handleInputChange}
                     className="border px-2 py-1"
                 />
@@ -102,9 +102,9 @@ const CreateExportOrder = ({ onExportOrderCreated }) => {
                 </label>
                 <input
                     type="date"
-                    name="shipping_data"
+                    name="shipping_date"
                     placeholder="Shipping Date"
-                    value={formData.shipping_data}
+                    value={formData.shipping_date}
                     onChange={handleInputChange}
                     className="border px-2 py-1"
                 />
@@ -112,24 +112,7 @@ const CreateExportOrder = ({ onExportOrderCreated }) => {
 
 
                 
-                <div className="mb-4">
-                <label htmlFor="shipping_status" className="text-gray-400 block mb-2">
-                    Shipping Status
-                </label>
-                <select
-                    id="shipping_status"
-                    name="shipping_status"
-                    value={formData.shippiing_status}
-                    onChange={handleInputChange}
-                    className="inline-block  p-2 rounded"
-                >
-                    <option value="Pending">Pending</option>
-                    <option value="In Transit">In Transit</option>
-                    <option value="Delivered">Delivered</option>
-                    <option value="Returned">Returned</option>
-                    <option value="Failed">Failed</option>
-                </select>
-                </div>
+
 
 
                 
