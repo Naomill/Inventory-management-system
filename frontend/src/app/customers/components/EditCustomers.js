@@ -1,53 +1,67 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import API from '../../../../services/api';
 
-const EditCustomers = ({ customer, onClose, onSave }) => { // เพิ่ม onSave เป็น prop
-  const [formData, setFormData] = useState({
-      customer_id: customer.customer_id,
-      customer_name: customer.customer_name || "",
-      contact_name: customer.contact_name || "",
-      phone: customer.phone || "",
-      email: customer.email || "",
-      address: customer.address || "",
-      is_active: customer.is_active || 0,
-  });
+const EditCustomers = ({ customer, onClose, onSave }) => {
+    const [formData, setFormData] = useState({
+        customer_id: customer.customer_id,
+        customer_name: customer.customer_name || "",
+        contact_name: customer.contact_name || "",
+        phone: customer.phone || "",
+        email: customer.email || "",
+        address: customer.address || "",
+        is_active: customer.is_active || 0,
+    });
 
-  const handleInputChange = (e) => {
-      const { name, value } = e.target;
-      setFormData((prev) => ({
-          ...prev,
-          [name]: name === "is_active" ? Number(value) : value, // แปลง is_active เป็นตัวเลข
-      }));
-  };
+    const [showModal, setShowModal] = useState(false);
+    const [pendingStatus, setPendingStatus] = useState(null);
 
-  const handleSave = async () => {
-      try {
-          console.log("Sending data to API:", formData);
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
 
-          const response = await API.put(`/customers/${formData.customer_id}`, formData);
+        if (name === "is_active") {
+            setPendingStatus(Number(value)); // เก็บสถานะที่กำลังจะเปลี่ยน
+            setShowModal(true); // แสดง Modal
+        } else {
+            setFormData((prev) => ({
+                ...prev,
+                [name]: value,
+            }));
+        }
+    };
 
-          if (response.status === 200) {
-              alert("Customer updated successfully");
-              onSave(formData); // เรียก onSave พร้อมส่งข้อมูลที่แก้ไขกลับไป
-          } else {
-              console.error("Error response:", response.data);
-              alert("Failed to update customer.");
-          }
-      } catch (error) {
-          console.error("Error updating customer:", error);
-          alert("Failed to update customer.");
-      }
-  };
-  
+    const confirmStatusChange = () => {
+        setFormData((prev) => ({
+            ...prev,
+            is_active: pendingStatus,
+        }));
+        setShowModal(false); // ซ่อน Modal
+    };
+
+    const cancelStatusChange = () => {
+        setShowModal(false); // ซ่อน Modal โดยไม่เปลี่ยนสถานะ
+    };
+
+    const handleSave = async () => {
+        try {
+            const response = await API.put(`/customers/${formData.customer_id}`, formData);
+
+            if (response.status === 200) {
+                alert("Customer updated successfully");
+                onSave(formData);
+            } else {
+                alert("Failed to update customer.");
+            }
+        } catch (error) {
+            alert("Failed to update customer.");
+        }
+    };
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-gray-800 rounded-lg shadow-lg p-6 w-2/3">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-2xl font-bold text-white">Edit Customer Detail</h2>
-                    <button onClick={onClose} className="text-white hover:text-red-500 text-2xl">
-                        ✖
-                    </button>
+                    <button onClick={onClose} className="text-white hover:text-red-500 text-2xl">✖</button>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -96,25 +110,33 @@ const EditCustomers = ({ customer, onClose, onSave }) => { // เพิ่ม on
                             Status <span className="text-red-500">*Important</span>
                         </label>
                         <div className="flex items-center space-x-4">
-                            <label className="text-white flex items-center">
+                            <label
+                                className={`flex items-center px-4 py-2 rounded ${
+                                    formData.is_active === 1 ? "bg-green-500 text-white" : "bg-gray-500 text-white"
+                                }`}
+                            >
                                 <input
                                     type="radio"
                                     name="is_active"
                                     value={1}
                                     checked={formData.is_active === 1}
                                     onChange={handleInputChange}
-                                    className="mr-2"
+                                    className="mr-2 hidden"
                                 />
                                 Active
                             </label>
-                            <label className="text-white flex items-center">
+                            <label
+                                className={`flex items-center px-4 py-2 rounded ${
+                                    formData.is_active === 0 ? "bg-red-500 text-white" : "bg-gray-500 text-white"
+                                }`}
+                            >
                                 <input
                                     type="radio"
                                     name="is_active"
                                     value={0}
                                     checked={formData.is_active === 0}
                                     onChange={handleInputChange}
-                                    className="mr-2"
+                                    className="mr-2 hidden"
                                 />
                                 Inactive
                             </label>
@@ -130,6 +152,29 @@ const EditCustomers = ({ customer, onClose, onSave }) => { // เพิ่ม on
                     </button>
                 </div>
             </div>
+
+            {showModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-gray-800 rounded-lg shadow-lg p-6 w-1/3 text-center">
+                        <h2 className="text-xl font-bold text-white mb-4">Change status of this customer?</h2>
+                        <p className="text-gray-300 mb-6">If you click "Confirm", this order will be activated.</p>
+                        <div className="flex justify-center space-x-4">
+                            <button
+                                onClick={cancelStatusChange}
+                                className="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={confirmStatusChange}
+                                className="px-4 py-2 rounded bg-green-500 text-white hover:bg-green-600"
+                            >
+                                Confirm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

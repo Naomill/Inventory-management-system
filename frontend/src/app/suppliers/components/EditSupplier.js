@@ -12,30 +12,47 @@ const EditSupplier = ({ supplier, onClose, onSave }) => {
     is_active: supplier.is_active || 0,
   });
 
-const handleInputChange = (e) => {
-  const { name, value } = e.target;
-  setFormData((prev) => ({
+  const [showModal, setShowModal] = useState(false);
+  const [pendingStatus, setPendingStatus] = useState(null);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name === "is_active") {
+      setPendingStatus(Number(value)); // เก็บสถานะที่ผู้ใช้กำลังจะเปลี่ยน
+      setShowModal(true); // แสดง Modal
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
+
+  const confirmStatusChange = () => {
+    setFormData((prev) => ({
       ...prev,
-      [name]: name === "is_active" ? Number(value) : value, // แปลง is_active เป็นตัวเลข
-  }));
-};
+      is_active: pendingStatus,
+    }));
+    setShowModal(false); // ปิด Modal
+  };
+
+  const cancelStatusChange = () => {
+    setShowModal(false); // ปิด Modal โดยไม่เปลี่ยนสถานะ
+  };
 
   const handleSave = async () => {
     try {
-        console.log("Sending data to API:", formData);
+      const response = await API.put(`/supplier/${formData.supplier_id}`, formData);
 
-        const response = await API.put(`/supplier/${formData.supplier_id}`, formData);
-
-        if (response.status === 200) {
-            alert("Supplier updated successfully");
-            onSave(formData); // เรียก onSave พร้อมส่งข้อมูลที่แก้ไขกลับไป
-        } else {
-            console.error("Error response:", response.data);
-            alert("Failed to update supplier.");
-        }
-    } catch (error) {
-        console.error("Error updating supplier:", error);
+      if (response.status === 200) {
+        alert("Supplier updated successfully");
+        onSave(formData);
+      } else {
         alert("Failed to update supplier.");
+      }
+    } catch (error) {
+      alert("Failed to update supplier.");
     }
   };
 
@@ -44,14 +61,10 @@ const handleInputChange = (e) => {
       <div className="bg-gray-800 rounded-lg shadow-lg p-6 w-2/3">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold text-white">Edit Supplier Detail</h2>
-          <button
-            onClick={onClose}
-            className="text-white hover:text-red-500 text-2xl"
-          >
+          <button onClick={onClose} className="text-white hover:text-red-500 text-2xl">
             ✖
           </button>
         </div>
-
         <div className="grid grid-cols-2 gap-4">
           {/* Left Section */}
           <div>
@@ -63,7 +76,6 @@ const handleInputChange = (e) => {
               onChange={handleInputChange}
               className="w-full bg-gray-700 text-white p-2 rounded mb-2"
             />
-
             <label className="text-gray-400">Contact Name</label>
             <input
               type="text"
@@ -72,7 +84,6 @@ const handleInputChange = (e) => {
               onChange={handleInputChange}
               className="w-full bg-gray-700 text-white p-2 rounded mb-2"
             />
-
             <label className="text-gray-400">Phone</label>
             <input
               type="text"
@@ -82,7 +93,6 @@ const handleInputChange = (e) => {
               className="w-full bg-gray-700 text-white p-2 rounded mb-2"
             />
           </div>
-
           {/* Right Section */}
           <div>
             <label className="text-gray-400">E-mail</label>
@@ -93,7 +103,6 @@ const handleInputChange = (e) => {
               onChange={handleInputChange}
               className="w-full bg-gray-700 text-white p-2 rounded mb-2"
             />
-
             <label className="text-gray-400">Address</label>
             <textarea
               name="address"
@@ -101,7 +110,6 @@ const handleInputChange = (e) => {
               onChange={handleInputChange}
               className="w-full bg-gray-700 text-white p-2 rounded mb-2"
             ></textarea>
-
             <label className="block text-gray-400 mb-1 text-sm">
               Status <span className="text-red-500">*Important</span>
             </label>
@@ -119,13 +127,11 @@ const handleInputChange = (e) => {
                   name="is_active"
                   value={1}
                   checked={formData.is_active === 1}
-                  onChange={handleInputChange} // เปลี่ยนสถานะเป็น Active
-                  className="mr-2"
-
+                  onChange={handleInputChange}
+                  className="mr-2 hidden"
                 />
                 Active
               </label>
-
               {/* Inactive Button */}
               <label
                 className={`flex items-center px-4 py-2 rounded ${
@@ -139,31 +145,45 @@ const handleInputChange = (e) => {
                   name="is_active"
                   value={0}
                   checked={formData.is_active === 0}
-                  onChange={handleInputChange} // เปลี่ยนสถานะเป็น Inactive
-                  className="mr-2"
+                  onChange={handleInputChange}
+                  className="mr-2 hidden"
                 />
                 Inactive
               </label>
             </div>
-
           </div>
         </div>
-
         <div className="flex justify-end space-x-4 mt-6">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600"
-          >
+          <button onClick={onClose} className="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600">
             Cancel
           </button>
-          <button
-            onClick={handleSave}
-            className="px-4 py-2 rounded bg-green-500 text-white hover:bg-green-600"
-          >
+          <button onClick={handleSave} className="px-4 py-2 rounded bg-green-500 text-white hover:bg-green-600">
             Save Changes
           </button>
         </div>
       </div>
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 rounded-lg shadow-lg p-6 w-1/3 text-center">
+            <h2 className="text-xl font-bold text-white mb-4">Change status of this supplier?</h2>
+            <p className="text-gray-300 mb-6">If you click "Confirm", the status will be updated.</p>
+            <div className="flex justify-center space-x-4">
+              <button
+                onClick={cancelStatusChange}
+                className="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmStatusChange}
+                className="px-4 py-2 rounded bg-green-500 text-white hover:bg-green-600"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
