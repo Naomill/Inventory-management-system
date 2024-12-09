@@ -31,6 +31,7 @@ export const createProduct = async (productData) => {
     }
 };
 
+
 // Update a product
 export const updateProduct = async (productId, updatedProduct) => {
     const response = await API.put(`/products/${productId}`, updatedProduct);
