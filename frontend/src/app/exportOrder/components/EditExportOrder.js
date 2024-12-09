@@ -5,7 +5,7 @@ const EditExportOrder = ({ exportOrder, onClose, onSave }) => {
   const [formData, setFormData] = useState({
     customer_id: exportOrder.customer_id,
     shipping_data: exportOrder.shipping_data || "",
-    shippiing_address: exportOrder.shippiing_address || "",
+    shipping_address: exportOrder.shipping_address || "",
     shipping_status: exportOrder.shipping_status || "Pending",                          // กำหนดค่าเริ่มต้น
     product_id: exportOrder.product_id || "",
     quantity: exportOrder.quantity || "",
@@ -72,7 +72,7 @@ const EditExportOrder = ({ exportOrder, onClose, onSave }) => {
 
             <label className="text-gray-400">Shipping Date</label>
             <input
-              type="text"
+              type="date"
               name="shipping_data"
               value={formData.shipping_data}
               onChange={handleInputChange}
@@ -82,8 +82,8 @@ const EditExportOrder = ({ exportOrder, onClose, onSave }) => {
             <label className="text-gray-400">Shipping Address</label>
             <input
               type="text"
-              name="shippiing_address"
-              value={formData.shippiing_address}
+              name="shipping_address"
+              value={formData.shipping_address}
               onChange={handleInputChange}
               className="w-full bg-gray-700 text-white p-2 rounded mb-2"
             />
