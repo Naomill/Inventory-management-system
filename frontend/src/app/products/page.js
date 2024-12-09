@@ -4,11 +4,7 @@ import { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
 import CreateProduct from "./components/CreateProduct";
 import EditProduct from "./components/EditProduct";
-import { getProducts, createProduct, updateProductStatus } from "../../../services/products";
-import {updatedProduct} from "../../../services/products";
-import API from "../../../services/api";
-
-
+import { getProducts, createProduct, updateProductStatus, updateProduct } from "../../../services/products";
 
 const ProductsPage = () => {
     const [products, setProducts] = useState([]);
@@ -91,14 +87,15 @@ const ProductsPage = () => {
         try {
             console.log("Sending payload to API:", updatedProduct);
     
-            const response = await API.put(`/products/${updatedProduct.product_id}`, updatedProduct);
+            // เรียกใช้ฟังก์ชัน updateProduct จาก services/products.js
+            const response = await updateProduct(updatedProduct.product_id, updatedProduct);
     
-            console.log("Response from API:", response.data);
+            console.log("Response from API:", response);
     
-            // อัปเดต state หลังจากแก้ไขสำเร็จ
+            // อัปเดต State หลังจากแก้ไขสำเร็จ
             setProducts((prevProducts) =>
                 prevProducts.map((p) =>
-                    p.product_id === updatedProduct.product_id ? response.data.product : p
+                    p.product_id === updatedProduct.product_id ? response.product : p
                 )
             );
     

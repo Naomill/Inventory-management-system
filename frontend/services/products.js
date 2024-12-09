@@ -32,17 +32,9 @@ export const createProduct = async (productData) => {
 };
 
 // Update a product
-export const updateProduct = async (productId, updatedData) => {
-    try {
-        if (!updatedData.category_id) {
-            throw new Error("Category ID is missing");
-        }
-        const response = await axios.put(`http://localhost:5001/api/products/${productId}`, updatedData);
-        return response.data;
-    } catch (error) {
-        console.error("Error in updateProduct API:", error.response?.data || error.message);
-        throw error;
-    }
+export const updateProduct = async (productId, updatedProduct) => {
+    const response = await API.put(`/products/${productId}`, updatedProduct);
+    return response.data;
 };
 
 
