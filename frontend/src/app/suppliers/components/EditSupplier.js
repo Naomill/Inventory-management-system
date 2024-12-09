@@ -106,7 +106,14 @@ const handleInputChange = (e) => {
               Status <span className="text-red-500">*Important</span>
             </label>
             <div className="flex items-center space-x-4">
-              <label className="text-white flex items-center">
+              {/* Active Button */}
+              <label
+                className={`flex items-center px-4 py-2 rounded ${
+                  formData.is_active === 1
+                    ? "bg-green-500 text-white"
+                    : "bg-gray-500 text-white"
+                }`}
+              >
                 <input
                   type="radio"
                   name="is_active"
@@ -114,10 +121,19 @@ const handleInputChange = (e) => {
                   checked={formData.is_active === 1}
                   onChange={handleInputChange} // เปลี่ยนสถานะเป็น Active
                   className="mr-2"
+
                 />
                 Active
               </label>
-              <label className="text-white flex items-center">
+
+              {/* Inactive Button */}
+              <label
+                className={`flex items-center px-4 py-2 rounded ${
+                  formData.is_active === 0
+                    ? "bg-red-500 text-white"
+                    : "bg-gray-500 text-white"
+                }`}
+              >
                 <input
                   type="radio"
                   name="is_active"
@@ -129,6 +145,7 @@ const handleInputChange = (e) => {
                 Inactive
               </label>
             </div>
+
           </div>
         </div>
 
