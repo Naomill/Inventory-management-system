@@ -65,28 +65,29 @@ router.get('/:id', async (req, res) => {
 });
 
 // Create a new order
-router.post('/products', async (req, res) => {
-    const { product_name, sku, category_id, description, quantity, unit_price } = req.body;
+// Create a new order
+router.post('/', async (req, res) => {
+    const { supplier_id, product_id, quantity, subtotal, total_amount, status } = req.body;
 
-    // ตรวจสอบว่าฟิลด์ที่สำคัญทั้งหมดมีค่าและประเภทข้อมูลถูกต้อง
-    if (!product_name || !sku || !category_id || !quantity || !unit_price) {
+    if (!supplier_id || !product_id || !quantity || !subtotal || !total_amount) {
         return res.status(400).json({ error: "All fields are required" });
     }
 
     try {
-        const result = await db.query(
-            'INSERT INTO Products (product_name, sku, category_id, description, quantity, unit_price) VALUES (?, ?, ?, ?, ?, ?)',
-            [product_name, sku, category_id, description, quantity, unit_price]
+        const [result] = await db.query(
+            `INSERT INTO orders (supplier_id, product_id, quantity, subtotal, total_amount, status)
+             VALUES (?, ?, ?, ?, ?, ?)`,
+            [supplier_id, product_id, quantity, subtotal, total_amount, status || 'Pending']
         );
 
         res.status(201).json({
             success: true,
-            product_id: result.insertId,
-            message: "Product added successfully",
+            order_id: result.insertId,
+            message: "Order created successfully",
         });
     } catch (err) {
-        console.error("Error inserting product:", err);
-        res.status(500).json({ error: "Failed to add product" });
+        console.error(err);
+        res.status(500).json({ error: "Failed to create order" });
     }
 });
 

@@ -59,7 +59,7 @@ const Navbar = () => {
                         </button>
                         {isExportOpen && (
                             <div className="ml-8">
-                                <Link href="/export-orders" legacyBehavior>
+                                <Link href="/exportOrder" legacyBehavior>
                                     <a className="block px-4 py-2 hover:bg-gray-700">Export Orders</a>
                                 </Link>
                                 <Link href="/customers" legacyBehavior>

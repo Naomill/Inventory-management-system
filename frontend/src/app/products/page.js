@@ -112,8 +112,6 @@ const ProductsPage = () => {
         }
     };
 
-    
-
     // Filter products by search term
     const filteredProducts = products.filter((product) =>
         product.product_name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -128,8 +126,7 @@ const ProductsPage = () => {
                     <h1 className="text-3xl font-bold text-gray-100">Products</h1>
                     
                 </div>
-
-
+                
                 {/* Search Bar */}
                 <div className="flex items-center justify-between mb-4">
                     <input
