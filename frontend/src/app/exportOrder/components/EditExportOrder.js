@@ -1,44 +1,43 @@
 import React, { useState, useEffect } from "react";
-import ChangeStatusExportOrder from "./ChangeStatusExportOrder"; // Assume this is the component to handle status change popup
+import API from "../../../../services/api"; // Make sure this is correctly importing your API service
+import ChangeStatusExportOrder from "./ChangeStatusExportOrder"; // Component to handle status change popup
 
 const EditExportOrder = ({ exportOrder, onClose, onSave }) => {
-  // Initialize formData only if exportOrder is available
-  const [formData, setFormData] = useState(() => {
-    if (exportOrder) {
-      return {
-        product_name: exportOrder.product_name || "",
-        quantity: exportOrder.quantity || "",
-        order_date: exportOrder.order_date || "",
-        shipping_date: exportOrder.shipping_date || "",
-        shipping_address: exportOrder.shipping_address || "",
-        shipping_status: exportOrder.shipping_status || "",
-        subtotal: exportOrder.subtotal || "",
-        total_amount: exportOrder.total_amount || "",
-        status: "Pending", // Set status to "Pending"
-      };
-    }
-    return {}; // Return an empty object if exportOrder is undefined
+  const [formData, setFormData] = useState({
+    export_order_id: exportOrder.export_order_id,
+    customer_id: exportOrder.customer_id || "",
+    customer_name: exportOrder.customer_name || "",
+    product_id: exportOrder.product_id || "",
+    product_name: exportOrder.product_name || "",
+    order_date: exportOrder.order_date || "",
+    shipping_date: exportOrder.shipping_date || "",
+    shipping_address: exportOrder.shipping_address || "",
+    shipping_status: exportOrder.shipping_status || "",
+    quantity: exportOrder.quantity || "",
+    subtotal: exportOrder.subtotal || "",
+    total_amount: exportOrder.total_amount || "",
+    status: exportOrder.status || 0,
   });
-
   const [isPopupVisible, setIsPopupVisible] = useState(false);
-  const [newStatus, setNewStatus] = useState(formData.status);
+  const [newStatus, setNewStatus] = useState("Pending");
 
-  // Sync form data with exportOrder prop whenever it changes
+  // Fetch the export order data from API when the component mounts
   useEffect(() => {
-    if (exportOrder) {
-      setFormData({
-        product_name: exportOrder.product_name || "",
-        quantity: exportOrder.quantity || "",
-        order_date: exportOrder.order_date || "",
-        shipping_date: exportOrder.shipping_date || "",
-        shipping_address: exportOrder.shipping_address || "",
-        shipping_status: exportOrder.shipping_status || "",
-        subtotal: exportOrder.subtotal || "",
-        total_amount: exportOrder.total_amount || "",
-        status: "Pending", // Ensure status is "Pending"
-      });
+    const fetchExportOrder = async () => {
+      try {
+        const response = await API.get(`/export-orders/${exportOrderId}`);
+        setFormData(response.data);
+        setNewStatus(response.data.status || "Pending"); // Initialize newStatus
+      } catch (error) {
+        console.error("Error fetching export order:", error);
+        alert("Failed to fetch export order.");
+      }
+    };
+
+    if (exportOrderId) {
+      fetchExportOrder();
     }
-  }, [exportOrder]); // Re-run when exportOrder prop changes
+  }, [exportOrderId]);
 
   // Handle input change
   const handleInputChange = (e) => {
@@ -47,19 +46,28 @@ const EditExportOrder = ({ exportOrder, onClose, onSave }) => {
   };
 
   // Handle save changes
-  const handleSave = () => {
-    onSave(formData);
+  const handleSave = async () => {
+    try {
+      const updatedData = { ...formData, status: newStatus };
+      const response = await API.put(`/export-orders/${exportOrderId}`, updatedData);
+      onSave(response.data); // Pass updated data to parent component
+      alert("Export Order updated successfully!");
+      onClose();
+    } catch (error) {
+      console.error("Error saving export order:", error);
+      alert("Failed to update export order.");
+    }
   };
 
-  // Handle status change popup
+  // Handle status change popup visibility
   const handleStatusChange = (status) => {
-    setNewStatus(status);
+    setNewStatus(status); // Update newStatus
     setIsPopupVisible(true);
   };
 
   const confirmStatusChange = () => {
-    setFormData((prev) => ({ ...prev, status: newStatus }));
-    setIsPopupVisible(false);
+    setFormData((prev) => ({ ...prev, status: newStatus })); // Update formData with newStatus
+    setIsPopupVisible(false); // Close popup
   };
 
   return (
@@ -78,11 +86,19 @@ const EditExportOrder = ({ exportOrder, onClose, onSave }) => {
         <div className="grid grid-cols-2 gap-4">
           {/* Left side */}
           <div>
-            <label className="text-gray-400">Product Name</label>
+            <label className="text-gray-400">Customer ID</label>
             <input
               type="text"
-              name="product_name"
-              value={formData.product_name || ""}
+              name="customer_id"
+              value={formData.customer_id || ""}
+              onChange={handleInputChange}
+              className="w-full bg-gray-700 text-white p-2 rounded mb-2"
+            />
+            <label className="text-gray-400">Product ID</label>
+            <input
+              type="text"
+              name="product_id"
+              value={formData.product_id || ""}
               onChange={handleInputChange}
               className="w-full bg-gray-700 text-white p-2 rounded mb-2"
             />
@@ -91,14 +107,6 @@ const EditExportOrder = ({ exportOrder, onClose, onSave }) => {
               type="number"
               name="quantity"
               value={formData.quantity || ""}
-              onChange={handleInputChange}
-              className="w-full bg-gray-700 text-white p-2 rounded mb-2"
-            />
-            <label className="text-gray-400">Order Date</label>
-            <input
-              type="date"
-              name="order_date"
-              value={formData.order_date || ""}
               onChange={handleInputChange}
               className="w-full bg-gray-700 text-white p-2 rounded mb-2"
             />
@@ -131,7 +139,7 @@ const EditExportOrder = ({ exportOrder, onClose, onSave }) => {
             />
             <label className="text-gray-400">Subtotal</label>
             <input
-              type="text"
+              type="number"
               name="subtotal"
               value={formData.subtotal || ""}
               onChange={handleInputChange}
@@ -139,7 +147,7 @@ const EditExportOrder = ({ exportOrder, onClose, onSave }) => {
             />
             <label className="text-gray-400">Total Amount</label>
             <input
-              type="text"
+              type="number"
               name="total_amount"
               value={formData.total_amount || ""}
               onChange={handleInputChange}
@@ -149,17 +157,19 @@ const EditExportOrder = ({ exportOrder, onClose, onSave }) => {
               Status <span className="text-red-500">*Important</span>
             </label>
             <div className="flex items-center space-x-4">
-              <label className="text-white flex items-center">
-                <input
-                  type="radio"
-                  name="status"
-                  value="Pending"
-                  checked={formData.status === "Pending"}
-                  onChange={() => handleStatusChange("Pending")}
-                  className="mr-2"
-                />
-                Pending
-              </label>
+              {["Pending", "Shipped", "Completed"].map((status) => (
+                <label key={status} className="text-white flex items-center">
+                  <input
+                    type="radio"
+                    name="status"
+                    value={status}
+                    checked={newStatus === status}
+                    onChange={() => handleStatusChange(status)}
+                    className="mr-2"
+                  />
+                  {status}
+                </label>
+              ))}
             </div>
           </div>
         </div>

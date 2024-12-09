@@ -2,51 +2,55 @@ import React, { useState } from "react";
 import API from "../../../../services/api";
 
 const CreateExportOrder = ({ onOrderCreated }) => {
-  // สร้าง state สำหรับฟอร์ม
   const [formData, setFormData] = useState({
-    product_name: "",
-    quantity: "",
-    order_date: "",
+    customer_id: "",
     shipping_date: "",
     shipping_address: "",
     shipping_status: "",
+    product_id: "",
+    quantity: "",
     subtotal: "",
     total_amount: "",
-    status: "Pending",  // ค่าเริ่มต้น
+    status: "Pending", // Default status
   });
 
-  // ฟังก์ชันสำหรับอัพเดตข้อมูลในฟอร์ม
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: name === "subtotal" || name === "total_amount" ? value || "0" : value, // Handle numeric fields
     }));
   };
 
-  // ฟังก์ชันสำหรับบันทึกข้อมูลลง API
   const handleSubmit = async (event) => {
     event.preventDefault();
+    
+    // Simple validation
+    if (!formData.customer_id || !formData.product_id || !formData.quantity) {
+      alert("Please fill all required fields.");
+      return;
+    }
 
     try {
       const response = await API.post("/export-orders", formData);
-      // เรียกใช้ฟังก์ชัน onOrderCreated เพื่อรีเฟรชข้อมูล
-      onOrderCreated();
+      console.log(response);  // Log the response for debugging
+      onOrderCreated();  // Refresh the order list
       alert("Export Order created successfully!");
-      // รีเซ็ตฟอร์มหลังการบันทึกข้อมูล
+      
+      // Reset the form after success
       setFormData({
-        product_name: "",
-        quantity: "",
-        order_date: "",
+        customer_id: "",
         shipping_date: "",
         shipping_address: "",
         shipping_status: "",
+        product_id: "",
+        quantity: "",
         subtotal: "",
         total_amount: "",
-        status: "Pending",
+        status: "Pending", // Reset status to Pending
       });
     } catch (err) {
-      console.error("Error creating export order:", err);
+      console.error("Error creating export order:", err.response || err);
       alert("Failed to create export order.");
     }
   };
@@ -54,13 +58,25 @@ const CreateExportOrder = ({ onOrderCreated }) => {
   return (
     <div className="bg-gray-900 text-white p-6 rounded-lg">
       <h2 className="text-2xl font-bold mb-4">Create Export Order</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block">Product Name</label>
+          <label className="block">Customer ID</label>
           <input
             type="text"
-            name="product_name"
-            value={formData.product_name}
+            name="customer_id"
+            value={formData.customer_id}
+            onChange={handleChange}
+            className="px-4 py-2 rounded bg-gray-800 text-white w-full"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block">Product ID</label>
+          <input
+            type="text"
+            name="product_id"
+            value={formData.product_id}
             onChange={handleChange}
             className="px-4 py-2 rounded bg-gray-800 text-white w-full"
             required
@@ -73,18 +89,6 @@ const CreateExportOrder = ({ onOrderCreated }) => {
             type="number"
             name="quantity"
             value={formData.quantity}
-            onChange={handleChange}
-            className="px-4 py-2 rounded bg-gray-800 text-white w-full"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block">Order Date</label>
-          <input
-            type="date"
-            name="order_date"
-            value={formData.order_date}
             onChange={handleChange}
             className="px-4 py-2 rounded bg-gray-800 text-white w-full"
             required
@@ -151,7 +155,7 @@ const CreateExportOrder = ({ onOrderCreated }) => {
           />
         </div>
 
-        <div>
+        <div className="col-span-2">
           <label className="block">Status</label>
           <select
             name="status"
@@ -167,7 +171,7 @@ const CreateExportOrder = ({ onOrderCreated }) => {
           </select>
         </div>
 
-        <div className="flex justify-end mt-4">
+        <div className="flex justify-end mt-4 col-span-2">
           <button
             type="submit"
             className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded"

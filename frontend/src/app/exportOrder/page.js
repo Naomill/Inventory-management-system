@@ -62,8 +62,8 @@ const ExportOrderPage = () => {
     setExportOrders(response.data);
   };
 
-  const handleEdit = (order) => {
-    setEditingOrder(order);
+  const handleEdit = (exportOrder) => {
+    setEditingOrder(exportOrder);
   };
 
   const handleSaveEdit = async (updatedOrder) => {
