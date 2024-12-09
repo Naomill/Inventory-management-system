@@ -1,68 +1,111 @@
 import React from "react";
 
-const ViewExportOrder = ({ order, onClose }) => {
-  if (!order) return null;  // ถ้าไม่มีข้อมูลให้ return null
-
+const ViewExportOrder = ({ exportOrder, onClose, onEdit }) => {
   return (
-    <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50">
-      <div className="bg-gray-900 text-white p-6 rounded-lg w-full max-w-3xl">
-        <h2 className="text-2xl font-bold mb-4">Export Order Details</h2>
-        <button
-          onClick={onClose}
-          className="bg-red-500 text-white px-4 py-2 rounded mb-4"
-        >
-          Close
-        </button>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-gray-800 rounded-lg shadow-lg p-6 w-2/3">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold text-white">Show Export Order Detail</h2>
+          <button
+            onClick={onClose}
+            className="text-white hover:text-red-500 text-2xl"
+          >
+            ✖
+          </button>
+        </div>
+
         <div className="grid grid-cols-2 gap-4">
+          {/* ซ้าย */}
           <div>
-            <strong>Export Order ID:</strong> {order.export_order_id}
-          </div>
+            <label className="text-gray-400">Customer ID</label>
+            <input
+              type="number"
+              value={exportOrder.customer_id || "N/A"}
+              disabled
+              className="w-full bg-gray-700 text-white p-2 rounded mb-2"
+            />
+
+            <label className="text-gray-400">Shipping Date</label>
+            <input
+              type="text"
+              value={exportOrder.shipping_data || "N/A"}
+              disabled
+              className="w-full bg-gray-700 text-white p-2 rounded mb-2"
+            />
+
+            <label className="text-gray-400">Shipping Address</label>
+            <input
+              type="text"
+              value={exportOrder.shippiing_address || "N/A"}
+              disabled
+              className="w-full bg-gray-700 text-white p-2 rounded mb-2"
+            />
+            </div>
+
+            <label className="text-gray-400">Shipping Status</label>
+            <input
+              type="text"
+              value={exportOrder.shippiing_status || "N/A"}
+              disabled
+              className="w-full bg-gray-700 text-white p-2 rounded mb-2"
+            />
+            </div>
+
+          {/* ขวา */}
           <div>
-            <strong>Customer ID:</strong> {order.customer_id}
-          </div>
-          <div>
-            <strong>Customer Name:</strong> {order.customer_name}
-          </div>
-          <div>
-            <strong>Product ID:</strong> {order.product_id}
-          </div>
-          <div>
-            <strong>Product Name:</strong> {order.product_name}
-          </div>
-          <div>
-            <strong>Quantity:</strong> {order.quantity}
-          </div>
-          <div>
-            <strong>Order Date:</strong> {new Date(order.order_date).toLocaleDateString()}
-          </div>
-          <div>
-            <strong>Shipping Date:</strong> {new Date(order.shipping_date).toLocaleDateString()}
-          </div>
-          <div>
-            <strong>Shipping Address:</strong> {order.shipping_address}
-          </div>
-          <div>
-            <strong>Shipping Status:</strong> {order.shipping_status}
-          </div>
-          <div>
-            <strong>Subtotal:</strong> {order.subtotal}
-          </div>
-          <div>
-            <strong>Total Amount:</strong> {order.total_amount}
-          </div>
-          <div>
-            <strong>Status:</strong> 
-            <span
-              className={`px-4 py-2 rounded ${
-                order.status === "Active" ? "bg-green-500 text-white" : "bg-red-500 text-white"
-              }`}
-            >
-              {order.status}
-            </span>
+            <label className="text-gray-400">Product ID</label>
+            <input
+              type="text"
+              value={exportOrder.product_id || "N/A"}
+              disabled
+              className="w-full bg-gray-700 text-white p-2 rounded mb-2"
+            />
+
+            <label className="text-gray-400">Quantity</label>
+            <input
+              type="text"
+              value={exportOrder.quantity || "N/A"}
+              disabled
+              className="w-full bg-gray-700 text-white p-2 rounded mb-2"
+            />
+
+            <label className="text-gray-400">Subtotal</label>
+            <input
+              type="text"
+              value={exportOrder.subtotal || "N/A"}
+              disabled
+              className="w-full bg-gray-700 text-white p-2 rounded mb-2"
+            />
+
+            <label className="text-gray-400">Total Amount</label>
+            <input
+              type="text"
+              value={exportOrder.total_amount || "N/A"}
+              disabled
+              className="w-full bg-gray-700 text-white p-2 rounded mb-2"
+            />
+
+        <label className="block text-gray-400 mb-1 text-sm">Status</label>
+        <div
+        className={`inline-block text-white p-2 rounded text-center ${
+            exportOrder.status === "Completed"
+            ? "bg-green-500"
+            : exportOrder.status === "Pending"
+            ? "bg-yellow-500"
+            : exportOrder.status === "Cancelled"
+            ? "bg-red-500"
+            : "bg-gray-500" // Default color for other statuses
+        }`}
+        >
+        {exportOrder.status}
+        </div>
+
+
           </div>
         </div>
-      </div>
-    </div>
+        </div>
+      
+      
   );
 };
 

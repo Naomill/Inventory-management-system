@@ -165,11 +165,12 @@ const SuppliersPage = () => {
                       {supplier.is_active === 1 ? "Active" : "Inactive"}
                     </span>
                   </td>
-                  <td className="border border-gray-700 px-4 py-2 flex justify-center items-center">
+                  <td className="border border-gray-700 px-4 py-2">
+                  <div className="flex justify-center items-center space-x-2">
                     {/* ปุ่ม Show */}
                     <button
                       onClick={() => handleViewSupplier(supplier.supplier_id)}
-                      className="bg-blue-500 px-4 py-2 rounded hover:bg-blue-600  text-white  mr-4"
+                      className="bg-blue-500 px-4 py-2 rounded hover:bg-blue-600  text-white "
                     >
                       Show
                     </button>
@@ -181,6 +182,7 @@ const SuppliersPage = () => {
                     >
                       Edit
                     </button>
+                    </div>
                   </td>
                 </tr>
               ))}

@@ -182,11 +182,12 @@ const OrdersPage = () => {
                         </span>
                         </td>
 
-                  <td className="border border-gray-700 px-4 py-2 flex justify-center items-center">
+                  <td className="border border-gray-700 px-4 py-2">
+                  <div className="flex justify-center items-center space-x-2">
                     {/* ปุ่ม Show */}
                     <button
                       onClick={() => handleViewOrder(order.order_id)}
-                      className="bg-blue-500 px-4 py-2 rounded hover:bg-blue-600  text-white  mr-4"
+                      className="bg-blue-500 px-4 py-2 rounded hover:bg-blue-600  text-white "
                     >
                       Show
                     </button>
@@ -198,6 +199,7 @@ const OrdersPage = () => {
                     >
                       Edit
                     </button>
+                    </div>
                   </td>
                 </tr>
               ))}
