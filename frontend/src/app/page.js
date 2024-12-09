@@ -13,11 +13,16 @@ const HomePage = () => {
                     Go to Customers
                 </Link>
 
+
                 <Link href="/suppliers" className="bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-600">
                     Go to Suppliers
                 </Link>
                 <Link href="/orders" className="bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-600">
                     Go to Orders
+                </Link>
+
+                <Link href="/exportOrder" className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                    Go to Export Order
                 </Link>
 
             </div>
