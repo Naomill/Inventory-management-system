@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import API from "../../../services/api";
-import CreateExportOrder from './components/CreateExportOrder';
+import CreateExportOrder from "./components/CreateExportOrder";
 import EditExportOrder from "./components/EditExportOrder";
 
 const ExportOrdersPage = () => {
@@ -11,9 +11,9 @@ const ExportOrdersPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedExportOrder, setSelectedExportOrder] = useState(null);
   const [editingExportOrder, setEditingExportOrder] = useState(null);
-  const [isCreateExportOrderVisible, setIsCreateExportOrderVisible] = useState(false);
+  const [isCreateExportOrderVisible, setIsCreateExportOrderVisible] =
+    useState(false);
 
-  // ดึงข้อมูลซัพพลายเออร์จาก API
   useEffect(() => {
     const fetchExportOrders = async () => {
       try {
@@ -22,7 +22,7 @@ const ExportOrdersPage = () => {
           (a, b) => a.export_order_id - b.export_order_id
         );
         setExportOrders(sortedData);
-        setFilteredExportOrders(sortedData); // ตั้งค่าข้อมูลเริ่มต้นสำหรับการค้นหา
+        setFilteredExportOrders(sortedData);
       } catch (err) {
         console.error(err);
       }
@@ -33,56 +33,85 @@ const ExportOrdersPage = () => {
 
   const handleViewExportOrder = async (id) => {
     try {
-        const response = await API.get(`/export-orders/${id}`);
-        setSelectedExportOrder(response.data);
+      const response = await API.get(`/export-orders/${id}`);
+      setSelectedExportOrder(response.data);
     } catch (err) {
-        console.error(err);
+      console.error(err);
     }
-};
+  };
 
-  // ฟิลเตอร์ซัพพลายเออร์เมื่อ searchTerm เปลี่ยน
   useEffect(() => {
     const searchResults = exportOrders.filter((exportOrder) =>
-        exportOrder.export_order_id.toString().includes(searchTerm.trim())
+      exportOrder.export_order_id?.toString().includes(searchTerm.trim())
     );
     setFilteredExportOrders(searchResults);
-  }, [searchTerm,exportOrders]);
+  }, [searchTerm, exportOrders]);
 
-  // อัปเดต searchTerm เมื่อผู้ใช้กรอกข้อมูลในช่องค้นหา
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
 
   const handleEdit = (exportOrder) => {
-    setEditingExportOrder(exportOrder);
-  };
-
-  const handleSaveEdit = async (updatedExportOrder) => {
-    try {
-      // เรียก API เพื่ออัปเดตข้อมูลในฐานข้อมูล
-      await API.put(`/export-orders/${updatedExportOrder.export_order_id}`, updatedExportOrder);
-  
-      // อัปเดต state ใน React หลังจากบันทึกสำเร็จ
-      const updatedExportOrders = exportOrders.map((sup) =>
-        sup.exportOrder_id === updatedExportOrder.export_order_id ? updatedExportOrder : sup
-      );
-      setExportOrders(updatedExportOrders);
-      setFilteredExportOrders(updatedExportOrders);
-      setEditingExportOrder(null); // ปิดหน้าต่าง Edit หลังบันทึกสำเร็จ
-    } catch (err) {
-      console.error("Unable to save exportorder information:", err);
+    console.log("Editing Export Order:", exportOrder);
+    if (!exportOrder.export_order_id) {
+        console.error("Export Order ID is missing in the selected data");
+        return;
     }
-  };
+    setEditingExportOrder(exportOrder);
+};
+
+const handleSaveEdit = async (updatedExportOrder) => {
+    try {
+        if (!updatedExportOrder.export_order_id) {
+            console.error("Export Order ID is missing");
+            return;
+        }
+
+        const url = `/export-orders/${updatedExportOrder.export_order_id}`;
+        console.log("Generated URL:", url);
+
+        await API.put(url, updatedExportOrder, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        console.log("Update successful");
+
+        const updatedExportOrders = exportOrders.map((sup) =>
+            sup.export_order_id === updatedExportOrder.export_order_id
+                ? updatedExportOrder
+                : sup
+        );
+        setExportOrders(updatedExportOrders);
+        setFilteredExportOrders(updatedExportOrders);
+        setEditingExportOrder(null);
+    } catch (err) {
+        console.error("Error Response:", {
+            data: err.response?.data,
+            status: err.response?.status,
+            headers: err.response?.headers,
+            message: err.message,
+        });
+    }
+};
 
   const toggleCreateExportOrder = () => {
-    setIsCreateExportOrderVisible(!isCreateExportOrderVisible);  
+    setIsCreateExportOrderVisible(!isCreateExportOrderVisible);
   };
 
- // ฟังก์ชันรีเฟรชข้อมูล
- const refreshData = async () => {
-  const response = await API.get("/export-orders");
-  setExportOrders(response.data);
-};
+  const refreshData = async () => {
+    try {
+      const response = await API.get("/export-orders");
+      const sortedData = response.data.sort(
+        (a, b) => a.export_order_id - b.export_order_id
+      );
+      setExportOrders(sortedData);
+      setFilteredExportOrders(sortedData);
+    } catch (err) {
+      console.error("Error refreshing data:", err);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
