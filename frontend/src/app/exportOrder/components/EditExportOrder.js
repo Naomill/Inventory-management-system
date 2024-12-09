@@ -3,16 +3,18 @@ import ChangeStatusExportOrder from "./ChangeStatusExportOrder"; // ใช้ Ch
 
 const EditExportOrder = ({ exportOrder, onClose, onSave }) => {
   const [formData, setFormData] = useState({
+    export_order_id: exportOrder.export_order_id || "",
     customer_id: exportOrder.customer_id,
     shipping_date: exportOrder.shipping_date || "",
     shipping_address: exportOrder.shipping_address || "",
-    shipping_status: exportOrder.shipping_status || "Pending",                          // กำหนดค่าเริ่มต้น
+    shipping_status: exportOrder.shipping_status || "Pending",
     product_id: exportOrder.product_id || "",
     quantity: exportOrder.quantity || "",
     subtotal: exportOrder.subtotal || "",
     total_amount: exportOrder.total_amount || "",
-    status: exportOrder.status ||  "Pending",
+    status: exportOrder.status || "Pending",
   });
+  
 
 
   const [isPopupVisible, setIsPopupVisible] = useState(false);

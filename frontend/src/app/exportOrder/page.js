@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import API from "../../../services/api";
 import CreateExportOrder from "./components/CreateExportOrder";
 import EditExportOrder from "./components/EditExportOrder";
+import Navbar from "app/sideBar/Navbar";
 
 const ExportOrdersPage = () => {
   const [exportOrders, setExportOrders] = useState([]);
@@ -66,6 +67,7 @@ const handleSaveEdit = async (updatedExportOrder) => {
             console.error("Export Order ID is missing");
             return;
         }
+        console.log("Updated Export Order:", updatedExportOrder);
 
         const url = `/export-orders/${updatedExportOrder.export_order_id}`;
         console.log("Generated URL:", url);
@@ -114,8 +116,9 @@ const handleSaveEdit = async (updatedExportOrder) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      <div className="container mx-auto py-8 px-4">
+    <div className="flex bg-gray-900 text-white min-h-screen">
+      <Navbar />
+      <div className="flex-grow p-6 ml-64 overflow-auto">
         <h1 className="text-3xl font-bold mb-6">Export Order Management</h1>
 
         {/* ค้นหาและปุ่มสร้าง */}
@@ -123,7 +126,7 @@ const handleSaveEdit = async (updatedExportOrder) => {
           <div className="flex items-center space-x-2">
             <input
               type="text"
-              placeholder="Search by EXportOrder ID"
+              placeholder="Search by Export order ID"
               className="px-4 py-2 rounded bg-gray-800 text-white focus:outline-none focus:ring focus:ring-blue-500"
               value={searchTerm}
               onChange={handleSearch}
