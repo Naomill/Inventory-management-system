@@ -73,120 +73,126 @@ const EditExportOrder = ({ exportOrder, onClose, onSave }) => {
             <label className="text-gray-400">Shipping Date</label>
             <input
               type="date"
-              name="shipping_data"
-              value={formData.shipping_data}
+              name="shipping_date"  // ใช้ชื่อที่ตรงกับใน formData
+              value={formData.shipping_date ? formData.shipping_date.split('T')[0] : ""}  // แปลงวันที่ในรูปแบบ YYYY-MM-DD
               onChange={handleInputChange}
               className="w-full bg-gray-700 text-white p-2 rounded mb-2"
             />
 
+
             <label className="text-gray-400">Shipping Address</label>
-            <input
-              type="text"
+            <textarea
               name="shipping_address"
               value={formData.shipping_address}
               onChange={handleInputChange}
-              className="w-full bg-gray-700 text-white p-2 rounded mb-2"
-            />
+              className="w-full bg-gray-700 text-white p-2 rounded mb-2 h-40"
+            ></textarea>
           
             <label className="block text-gray-400 mb-1 text-sm">
               Shipping Status <span className="text-red-500">*Important</span>
             </label>
-            <div className="flex items-center space-x-4">
-              {/* Pending */}
-              <label
-                className={`flex items-center px-4 py-2 rounded ${
-                  formData.shipping_status === "Pending"
-                    ? "bg-yellow-500 text-white"
-                    : "bg-gray-500 text-white"
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="shipping_status"
-                  value="Pending"
-                  checked={formData.shipping_status === "Pending"}
-                  onChange={() => handleShippingStatusChange("Pending")} // เปลี่ยนสถานะเป็น Pending
-                  className="mr-2 hidden"
-                />
-                Pending
-              </label>
+            <div className="space-y-2">
+  {/* แถวแรก */}
+  <div className="flex space-x-4">
+    {/* Pending */}
+    <label
+      className={`flex items-center px-4 py-2 rounded ${
+        formData.shipping_status === "Pending"
+          ? "bg-yellow-500 text-white"
+          : "bg-gray-500 text-white"
+      }`}
+    >
+      <input
+        type="radio"
+        name="shipping_status"
+        value="Pending"
+        checked={formData.shipping_status === "Pending"}
+        onChange={() => handleShippingStatusChange("Pending")}
+        className="mr-2 hidden"
+      />
+      Pending
+    </label>
 
-              {/* In Transit */}
-              <label
-                className={`flex items-center px-4 py-2 rounded ${
-                  formData.shipping_status === "In Transit"
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-500 text-white"
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="shipping_status"
-                  value="In Transit"
-                  checked={formData.shipping_status === "In Transit"}
-                  onChange={() => handleShippingStatusChange("In Transit")} // เปลี่ยนสถานะเป็น In Transit
-                  className="mr-2 hidden"
-                />
-                In Transit
-              </label>
+    {/* In Transit */}
+    <label
+      className={`flex items-center px-4 py-2 rounded ${
+        formData.shipping_status === "In Transit"
+          ? "bg-blue-500 text-white"
+          : "bg-gray-500 text-white"
+      }`}
+    >
+      <input
+        type="radio"
+        name="shipping_status"
+        value="In Transit"
+        checked={formData.shipping_status === "In Transit"}
+        onChange={() => handleShippingStatusChange("In Transit")}
+        className="mr-2 hidden"
+      />
+      In Transit
+    </label>
 
-              {/* Delivered */}
-              <label
-                className={`flex items-center px-4 py-2 rounded ${
-                  formData.shipping_status === "Delivered"
-                    ? "bg-green-500 text-white"
-                    : "bg-gray-500 text-white"
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="shipping_status"
-                  value="Delivered"
-                  checked={formData.shipping_status === "Delivered"}
-                  onChange={() => handleShippingStatusChange("Delivered")} // เปลี่ยนสถานะเป็น Delivered
-                  className="mr-2 hidden"
-                />
-                Delivered
-              </label>
+    {/* Delivered */}
+    <label
+      className={`flex items-center px-4 py-2 rounded ${
+        formData.shipping_status === "Delivered"
+          ? "bg-green-500 text-white"
+          : "bg-gray-500 text-white"
+      }`}
+    >
+      <input
+        type="radio"
+        name="shipping_status"
+        value="Delivered"
+        checked={formData.shipping_status === "Delivered"}
+        onChange={() => handleShippingStatusChange("Delivered")}
+        className="mr-2 hidden"
+      />
+      Delivered
+    </label>
+  </div>
 
-              {/* Returned */}
-              <label
-                className={`flex items-center px-4 py-2 rounded ${
-                  formData.shipping_status === "Returned"
-                    ? "bg-red-500 text-white"
-                    : "bg-gray-500 text-white"
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="shipping_status"
-                  value="Returned"
-                  checked={formData.shipping_status === "Returned"}
-                  onChange={() => handleShippingStatusChange("Returned")} // เปลี่ยนสถานะเป็น Returned
-                  className="mr-2 hidden"
-                />
-                Returned
-              </label>
+  {/* แถวที่สอง */}
+  <div className="flex space-x-4">
+    {/* Returned */}
+    <label
+      className={`flex items-center px-4 py-2 rounded ${
+        formData.shipping_status === "Returned"
+          ? "bg-red-500 text-white"
+          : "bg-gray-500 text-white"
+      }`}
+    >
+      <input
+        type="radio"
+        name="shipping_status"
+        value="Returned"
+        checked={formData.shipping_status === "Returned"}
+        onChange={() => handleShippingStatusChange("Returned")}
+        className="mr-2 hidden"
+      />
+      Returned
+    </label>
 
-              {/* Failed */}
-              <label
-                className={`flex items-center px-4 py-2 rounded ${
-                  formData.shipping_status === "Failed"
-                    ? "bg-black text-white"
-                    : "bg-gray-500 text-white"
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="shipping_status"
-                  value="Failed"
-                  checked={formData.shipping_status === "Failed"}
-                  onChange={() => handleShippingStatusChange("Failed")} // เปลี่ยนสถานะเป็น Failed
-                  className="mr-2 hidden"
-                />
-                Failed
-              </label>
-            </div>
+    {/* Failed */}
+    <label
+      className={`flex items-center px-4 py-2 rounded ${
+        formData.shipping_status === "Failed"
+          ? "bg-black text-white"
+          : "bg-gray-500 text-white"
+      }`}
+    >
+      <input
+        type="radio"
+        name="shipping_status"
+        value="Failed"
+        checked={formData.shipping_status === "Failed"}
+        onChange={() => handleShippingStatusChange("Failed")}
+        className="mr-2 hidden"
+      />
+      Failed
+    </label>
+  </div>
+</div>
 
 
           

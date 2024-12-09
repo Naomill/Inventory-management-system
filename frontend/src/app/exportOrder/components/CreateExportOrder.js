@@ -53,30 +53,7 @@ const CreateExportOrder = ({ onExportOrderCreated }) => {
                     onChange={handleInputChange}
                     className="border px-2 py-1"
                 />
-                <input
-                    type="date"
-                    name="shipping_data"
-                    placeholder="Shipping Date"
-                    value={formData.shipping_data}
-                    onChange={handleInputChange}
-                    className="border px-2 py-1"
-                />
-                <input
-                    type="text"
-                    name="shippiing_address"
-                    placeholder="Shipping Address"
-                    value={formData.shippiing_address}
-                    onChange={handleInputChange}
-                    className="border px-2 py-1"
-                />
-                <input
-                    type="text"
-                    name="shippiing_status"
-                    placeholder="Shipping Status"
-                    value={formData.shippiing_status}
-                    onChange={handleInputChange}
-                    className="border px-2 py-1"
-                />
+
                 <input
                     type="number"
                     name="product_id"
@@ -110,7 +87,51 @@ const CreateExportOrder = ({ onExportOrderCreated }) => {
                     className="border px-2 py-1"
                 />
 
+                <input
+                    type="text"
+                    name="shippiing_address"
+                    placeholder="Shipping Address"
+                    value={formData.shippiing_address}
+                    onChange={handleInputChange}
+                    className="border px-2 py-1"
+                />
+
+                <div className="mb-4">
+                <label htmlFor="Shipping Date" className="text-gray-400 block mb-2">
+                Shipping Date
+                </label>
+                <input
+                    type="date"
+                    name="shipping_data"
+                    placeholder="Shipping Date"
+                    value={formData.shipping_data}
+                    onChange={handleInputChange}
+                    className="border px-2 py-1"
+                />
+                </div>
+
+
                 
+                <div className="mb-4">
+                <label htmlFor="shipping_status" className="text-gray-400 block mb-2">
+                    Shipping Status
+                </label>
+                <select
+                    id="shipping_status"
+                    name="shipping_status"
+                    value={formData.shipping_status}
+                    onChange={handleInputChange}
+                    className="inline-block  p-2 rounded"
+                >
+                    <option value="Pending">Pending</option>
+                    <option value="In Transit">In Transit</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Returned">Returned</option>
+                    <option value="Failed">Failed</option>
+                </select>
+                </div>
+
+
                 
             </div>
             <button
