@@ -2,8 +2,8 @@ import axios from "axios";
 
 // Create an instance of Axios with a base URL
 const api = axios.create({ // ใช้ชื่อ `api` ตลอดไฟล์นี้
-    baseURL: "http://localhost:5001/api", // URL ของ Backend
-    timeout: 5001, // ตั้งค่าการหมดเวลา
+    baseURL: "http://localhost:5000/api", // URL ของ Backend
+    timeout: 5000, // ตั้งค่าการหมดเวลา
     headers: {
         "Content-Type": "application/json",
     },
@@ -36,15 +36,17 @@ export const deleteCategory = async (id) => {
     }
 };
 
-// Function to update category status
-export const updateCategoryStatus = async (id, newStatus) => {
+// Update a category
+export const updateCategory = async (id, updatedData) => {
     try {
-        console.log(`Sending request to update status: {id: ${id}, newStatus: ${newStatus}}`);
-        const response = await api.patch(`/categories/${id}/status`, { is_active: newStatus });
-        console.log("Response from server:", response.data);
+        console.log(`Updating category ID: ${id}`, updatedData); // Debugging log
+        const response = await api.put(`/categories/${id}`, updatedData); // เปลี่ยนจาก `API` เป็น `api`
+        console.log("Updated category response:", response.data); // Debugging log
         return response.data;
     } catch (error) {
-        console.error("Error in updateCategoryStatus:", error.response?.data || error.message);
+        console.error("Error in updateCategory:", error.response?.data || error.message);
         throw error;
     }
 };
+
+

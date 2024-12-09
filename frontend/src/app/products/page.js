@@ -1,14 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Navbar from "./components/Navbar";
-import CreateProduct from "./components/CreateProduct";
+import Navbar from "../sideBar/Navbar";
 import EditProduct from "./components/EditProduct";
-import { getProducts, createProduct, updateProductStatus } from "../../../services/products";
-import {updatedProduct} from "../../../services/products";
-import API from "../../../services/api";
-
-
+import CreateProductPopup from "./components/CreateProduct";
+import { getProducts, createProduct, updateProductStatus, updateProduct } from "../../../services/products";
 
 const ProductsPage = () => {
     const [products, setProducts] = useState([]);
@@ -31,17 +27,19 @@ const ProductsPage = () => {
         fetchProducts();
     }, []);
 
-    // Handle product creation
     const handleProductCreated = async (newProduct) => {
         try {
+            console.log("Sending new product:", newProduct); // ดูข้อมูลก่อนส่ง
             const createdProduct = await createProduct(newProduct);
-            setProducts([...products, createdProduct].sort((a, b) => a.product_id - b.product_id));
-            setShowAddForm(false);
+            console.log("Created product:", createdProduct); // ดูผลลัพธ์จาก API
+            alert("Product created successfully!");
+            window.location.reload(); // รีเฟรชหน้าใหม่หลังสร้างเสร็จ
         } catch (err) {
-            console.error("Error creating product:", err);
+            console.error("Error creating product:", err.message || err);
+            alert("Failed to create product. Please try again.");
         }
     };
-
+    
     // Handle status button click
     const handleStatusClick = (product) => {
         setProductToUpdate(product);
@@ -91,25 +89,29 @@ const ProductsPage = () => {
         try {
             console.log("Sending payload to API:", updatedProduct);
     
-            const response = await API.put(`/products/${updatedProduct.product_id}`, updatedProduct);
+            // เรียกใช้ฟังก์ชัน updateProduct จาก services/products.js
+            const response = await updateProduct(updatedProduct.product_id, updatedProduct);
     
-            console.log("Response from API:", response.data);
+            console.log("Response from API:", response);
     
-            // อัปเดต state หลังจากแก้ไขสำเร็จ
+            // อัปเดต State หลังจากแก้ไขสำเร็จ
             setProducts((prevProducts) =>
                 prevProducts.map((p) =>
-                    p.product_id === updatedProduct.product_id ? response.data.product : p
+                    p.product_id === updatedProduct.product_id ? response.product : p
                 )
             );
     
             alert("Product updated successfully!");
             setProductToEdit(null);
+                        
+            // Reload the page to reflect changes
+            window.location.reload();
         } catch (err) {
             console.error("Error updating product:", err.response ? err.response.data : err.message);
             alert("Failed to update product. Please try again.");
         }
     };
-    
+
     
 
     // Filter products by search term
@@ -132,8 +134,6 @@ const ProductsPage = () => {
                     </button>
                 </div>
 
-                {/* Add Product Form */}
-                {showAddForm && <CreateProduct onProductCreated={handleProductCreated} />}
 
                 {/* Search Bar */}
                 <div className="mb-4 flex items-center">
@@ -144,9 +144,6 @@ const ProductsPage = () => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="bg-gray-800 text-gray-300 px-4 py-2 rounded-l focus:outline-none focus:ring focus:ring-gray-700 w-1/3"
                     />
-                    <button className="bg-gray-700 text-gray-300 px-4 py-2 rounded-r hover:bg-gray-600">
-                        Search
-                    </button>
                 </div>
 
                 {/* Product Table */}
@@ -228,6 +225,13 @@ const ProductsPage = () => {
                             </div>
                         </div>
                     </div>
+                )}
+                {/* Create Product Form */}
+                {showAddForm && (
+                    <CreateProductPopup
+                        onClose={() => setShowAddForm(false)}
+                        onSave={handleProductCreated}
+                    />
                 )}
 
                 {/* Edit Product Form */}

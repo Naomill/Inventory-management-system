@@ -2,8 +2,8 @@ import axios from "axios";
 
 // Create an instance of Axios with a base URL
 const API = axios.create({
-    baseURL: "http://localhost:5001/api", // URL ของ Backend
-    timeout: 5001, // ตั้งค่าการหมดเวลา
+    baseURL: "http://localhost:5000/api", // URL ของ Backend
+    timeout: 5000, // ตั้งค่าการหมดเวลา
     headers: {
         "Content-Type": "application/json",
     },

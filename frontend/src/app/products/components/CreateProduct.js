@@ -1,101 +1,130 @@
-import { useState } from 'react';
-import API from '../../../../services/api'
+"use client";
 
+import { useState } from "react";
 
-const CreateProduct = ({ onProductCreated }) => {
+const CreateProductPopup = ({ onClose, onSave }) => {
     const [formData, setFormData] = useState({
-        product_name: '',
-        sku: '',
-        category_id: '',
-        description: '',
-        quantity: '',
-        unit_price: ''
+        product_name: "",
+        sku: "",
+        category_id: "",
+        quantity: 0,
+        unit_price: "",
+        description: "",
     });
+    const [error, setError] = useState(null);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
     };
 
-    const handleAddProduct = async () => {
-        try {
-            const response = await API.post('/products', formData);
-            onProductCreated(response.data); // ส่งสินค้าใหม่กลับไป
-            setFormData({
-                product_name: '',
-                sku: '',
-                category_id: '',
-                description: '',
-                quantity: '',
-                unit_price: ''
-            });
-        } catch (err) {
-            alert(`Error: ${err.message}`);
+    const validateForm = () => {
+        console.log("Form Data:", formData); // ตรวจสอบข้อมูล
+        if (!formData.product_name.trim()) return "Product Name is required.";
+        if (!formData.sku.trim()) return "SKU is required.";
+        if (!formData.category_id) return "Category ID is required.";
+        if (formData.quantity < 0) return "Quantity cannot be negative.";
+        if (formData.unit_price === "" || formData.unit_price < 0) return "Unit Price must be positive.";
+        return null;
+    };
+
+    const handleSave = () => {
+        const validationError = validateForm();
+        if (validationError) {
+            setError(validationError);
+            return;
         }
+
+        onSave(formData); // Pass the new product data to parent
     };
 
     return (
-        <div>
-            <h2 className="text-lg font-bold mb-2">Add New Product</h2>
-            <div className="grid grid-cols-2 gap-4 text-black">
-                <input
-                    type="text"
-                    name="product_name"
-                    placeholder="Product Name"
-                    value={formData.product_name}
-                    onChange={handleInputChange}
-                    className="border px-2 py-1"
-                />
-                <input
-                    type="text"
-                    name="sku"
-                    placeholder="SKU"
-                    value={formData.sku}
-                    onChange={handleInputChange}
-                    className="border px-2 py-1"
-                />
-                <input
-                    type="number"
-                    name="category_id"
-                    placeholder="Category ID"
-                    value={formData.category_id}
-                    onChange={handleInputChange}
-                    className="border px-2 py-1"
-                />
-                <input
-                    type="text"
-                    name="description"
-                    placeholder="Description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    className="border px-2 py-1"
-                />
-                <input
-                    type="number"
-                    name="quantity"
-                    placeholder="Quantity"
-                    value={formData.quantity}
-                    onChange={handleInputChange}
-                    className="border px-2 py-1"
-                />
-                <input
-                    type="number"
-                    step="0.01"
-                    name="unit_price"
-                    placeholder="Unit Price"
-                    value={formData.unit_price}
-                    onChange={handleInputChange}
-                    className="border px-2 py-1"
-                />
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <div className="bg-gray-800 p-6 rounded-lg shadow-lg max-w-lg w-full">
+                <h3 className="text-white font-bold text-lg mb-4">Add New Product</h3>
+
+                {error && <p className="text-red-500 mb-4">{error}</p>}
+
+                <div className="mb-4">
+                    <label className="block text-gray-300">Product Name</label>
+                    <input
+                        type="text"
+                        name="product_name"
+                        value={formData.product_name}
+                        onChange={handleInputChange}
+                        className="w-full bg-gray-700 text-gray-300 px-3 py-2 rounded"
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block text-gray-300">SKU</label>
+                    <input
+                        type="text"
+                        name="sku"
+                        value={formData.sku}
+                        onChange={handleInputChange}
+                        className="w-full bg-gray-700 text-gray-300 px-3 py-2 rounded"
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block text-gray-300">Category ID</label>
+                    <input
+                        type="number"
+                        name="category_id"
+                        value={formData.category_id}
+                        onChange={handleInputChange}
+                        className="w-full bg-gray-700 text-gray-300 px-3 py-2 rounded"
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block text-gray-300">Quantity</label>
+                    <input
+                        type="number"
+                        name="quantity"
+                        value={formData.quantity}
+                        onChange={handleInputChange}
+                        className="w-full bg-gray-700 text-gray-300 px-3 py-2 rounded"
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block text-gray-300">Unit Price</label>
+                    <input
+                        type="number"
+                        name="unit_price"
+                        value={formData.unit_price}
+                        onChange={handleInputChange}
+                        className="w-full bg-gray-700 text-gray-300 px-3 py-2 rounded"
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block text-gray-300">Description</label>
+                    <textarea
+                        name="description"
+                        value={formData.description}
+                        onChange={handleInputChange}
+                        className="w-full bg-gray-700 text-gray-300 px-3 py-2 rounded"
+                    />
+                </div>
+
+                <div className="flex justify-end space-x-4">
+                    <button
+                        onClick={onClose}
+                        className="bg-gray-500 text-white px-4 py-2 rounded"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        onClick={handleSave}
+                        className="bg-green-500 text-white px-4 py-2 rounded"
+                    >
+                        Save
+                    </button>
+                </div>
             </div>
-            <button
-                onClick={handleAddProduct}
-                className="bg-blue-500 text-white px-4 py-2 mt-4 rounded hover:bg-blue-600"
-            >
-                Save Product
-            </button>
         </div>
     );
 };
 
-export default CreateProduct;
+export default CreateProductPopup;
