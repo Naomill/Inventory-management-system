@@ -90,6 +90,15 @@ const EditOrder = ({ order, onClose, onSave }) => {
               className="w-full bg-gray-700 text-white p-2 rounded mb-2"
             />
 
+            <label className="text-gray-400">Total Amount</label>
+            <input
+              type="number"
+              name="total_amount"
+              value={formData.total_amount}
+              onChange={handleInputChange}
+              className="w-full bg-gray-700 text-white p-2 rounded mb-2"
+            />
+
             <label className="block text-gray-400 mb-1 text-sm">
             Status <span className="text-red-500">*Important</span>
             </label>
@@ -108,7 +117,7 @@ const EditOrder = ({ order, onClose, onSave }) => {
                 value="Completed"
                 checked={formData.status === "Completed"}
                 onChange={() => handleStatusChange("Completed")} // เปลี่ยนสถานะเป็น Completed
-                className="mr-2"
+                className="mr-2 hidden"
                 />
                 Completed
             </label>
@@ -127,7 +136,7 @@ const EditOrder = ({ order, onClose, onSave }) => {
                 value="Pending"
                 checked={formData.status === "Pending"}
                 onChange={() => handleStatusChange("Pending")} // เปลี่ยนสถานะเป็น Pending
-                className="mr-2"
+                className="mr-2 hidden"
                 />
                 Pending
             </label>
@@ -146,7 +155,7 @@ const EditOrder = ({ order, onClose, onSave }) => {
                 value="Cancelled"
                 checked={formData.status === "Cancelled"}
                 onChange={() => handleStatusChange("Cancelled")} // เปลี่ยนสถานะเป็น Cancelled
-                className="mr-2"
+                className="mr-2 hidden"
                 />
                 Cancelled
             </label>
