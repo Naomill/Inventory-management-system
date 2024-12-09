@@ -5,6 +5,7 @@ import API from "../../../services/api";
 import CreateCustomers from './components/CreateCustomers'; 
 import ViewCustomer from './components/ViewCustomers';
 import EditCustomer from "./components/EditCustomers";
+import Navbar from "app/sideBar/Navbar";
 
 const CustomersPage = () => {
   const [customers, setCustomers] = useState([]);
@@ -14,6 +15,7 @@ const CustomersPage = () => {
   const [isCreateCustomerVisible, setIsCreateCustomerVisible] = useState(false);  // สถานะควบคุมการแสดงฟอร์ม
   const [editingCustomer, setEditingCustomer] = useState(null);
 
+  
   // ดึงข้อมูลลูกค้าจาก API
   useEffect(() => {
     const fetchCustomers = async () => {
@@ -86,8 +88,9 @@ const CustomersPage = () => {
   };
   
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      <div className="container mx-auto py-8 px-4">
+    <div className="flex bg-gray-900 text-white min-h-screen">
+      <Navbar />
+      <div className="flex-grow p-6 ml-64 overflow-auto">
         <h1 className="text-3xl font-bold mb-6">Customer Management</h1>
 
         {/* ค้นหาและปุ่มสร้าง */}

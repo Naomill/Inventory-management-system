@@ -120,30 +120,31 @@ const ProductsPage = () => {
     );
 
     return (
-        <div className="flex bg-[#22252A] text-white min-h-screen">
+        <div className="flex bg-gray-900 text-white min-h-screen">
             <Navbar />
             <div className="flex-grow p-6 ml-64 overflow-auto">
                 {/* Header */}
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-3xl font-bold text-gray-100">Products</h1>
+                    
+                </div>
+
+
+                {/* Search Bar */}
+                <div className="flex items-center justify-between mb-4">
+                    <input
+                        type="text"
+                        placeholder="Search by Product ID or Product Name"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="bg-gray-800 text-gray-300 px-4 py-2 rounded focus:outline-none focus:ring focus:ring-gray-700 w-1/3"
+                    />
                     <button
                         onClick={() => setShowAddForm(!showAddForm)}
                         className="bg-green-500 text-white px-6 py-2 rounded shadow hover:bg-green-600 transition"
                     >
                         {showAddForm ? "Cancel" : "Add new product"}
                     </button>
-                </div>
-
-
-                {/* Search Bar */}
-                <div className="mb-4 flex items-center">
-                    <input
-                        type="text"
-                        placeholder="Search by Product Name"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="bg-gray-800 text-gray-300 px-4 py-2 rounded-l focus:outline-none focus:ring focus:ring-gray-700 w-1/3"
-                    />
                 </div>
 
                 {/* Product Table */}

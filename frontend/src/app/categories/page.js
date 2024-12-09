@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Navbar from "../sideBar/Navbar";
 import { getCategories, createCategory, updateCategory } from "../../../services/categories";
-import { updateCategoryStatus } from "../../../services/categories";
 
 const page = () => {
     const [categories, setCategories] = useState([]);
@@ -60,6 +59,13 @@ const page = () => {
         setEditCategoryData({ category_name: "", description: "" });
     };
 
+    const [searchTerm, setSearchTerm] = useState("");    
+    // Filter products by search term
+    const filteredCategory = categories.filter((category) =>
+        category.category_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        category.category_id.toString().includes(searchTerm)
+    );
+
     // Handle adding a new category
     const handleAddCategory = async () => {
         const { category_name, description } = newCategoryData;
@@ -102,27 +108,26 @@ const page = () => {
             alert("Failed to update category.");
         }
     };
-    
-    // // Handle toggling category status
-    // const handleToggleStatus = async (category) => {
-    //     try {
-    //         const updatedCategory = await updateCategoryStatus(category.category_id, !category.is_active);
-    //         setCategories((prev) =>
-    //             prev.map((cat) =>
-    //                 cat.category_id === category.category_id ? { ...cat, is_active: updatedCategory.is_active } : cat
-    //             )
-    //         );
-    //     } catch (error) {
-    //         console.error("Error updating category status:", error);
-    //     }
-    // };
 
     return (
-        <div className="flex bg-[#22252A] text-white min-h-screen">
+        <div className="flex bg-gray-900 text-white min-h-screen">
             <Navbar />
             <div className="flex-grow p-6 ml-64 overflow-auto">
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-3xl font-bold text-gray-100">Categories</h1>
+                </div>
+
+                {loading && <p className="text-gray-300">Loading...</p>}
+
+                {/* Search Bar */}
+                <div className="flex items-center justify-between mb-4">
+                    <input
+                        type="text"
+                        placeholder="Search by Category ID or Category Name"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="bg-gray-800 text-gray-300 px-4 py-2 rounded focus:outline-none focus:ring focus:ring-gray-700 w-1/3"
+                    />
                     <button
                         onClick={handleOpenAddPopup}
                         className="bg-green-500 text-white px-6 py-2 rounded shadow hover:bg-green-600 transition"
@@ -130,8 +135,6 @@ const page = () => {
                         Add Category
                     </button>
                 </div>
-
-                {loading && <p className="text-gray-300">Loading...</p>}
 
                 <table className="table-auto w-full border-collapse border border-gray-700 rounded-lg bg-gray-800 text-sm">
                     <thead>
@@ -144,7 +147,7 @@ const page = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {categories.map((category) => (
+                        {filteredCategory.map((category) => (
                             <tr key={category.category_id} className="hover:bg-gray-700">
                                 <td className="border border-gray-700 px-4 py-2">{category.category_id}</td>
                                 <td className="border border-gray-700 px-4 py-2">{category.category_name}</td>

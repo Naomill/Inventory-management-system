@@ -14,8 +14,14 @@
   }
 }
 
-body {
-  background-color: #f5f5f5;
-  font-family: var(--font-geist-sans);
+@font-face {
+  font-family: 'LINESeedSans';
+  src: url('/fonts/LINESeedSans_W_Rg.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
 }
 
+
+body {
+  font-family: 'LINESeedSans', sans-serif;
+}

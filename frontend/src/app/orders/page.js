@@ -5,6 +5,7 @@ import API from "../../../services/api";
 import CreateOrder from './components/CreateOrder';
 import ViewOrder from './components/ViewOrder';
 import EditOrder from "./components/EditOrder";
+import Navbar from "app/sideBar/Navbar";
 
 const OrdersPage = () => {
   const [orders, setOrders] = useState([]);
@@ -19,13 +20,16 @@ const OrdersPage = () => {
     const fetchOrders = async () => {
       try {
         const response = await API.get("/orders");
+        console.log("Fetched orders:", response.data);
+
         const sortedData = response.data.sort(
           (a, b) => a.order_id - b.order_id
         );
         setOrders(sortedData);
         setFilteredOrders(sortedData); // ตั้งค่าข้อมูลเริ่มต้นสำหรับการค้นหา
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching orders:", err.message);
+        console.error("Error details:", err.response?.data || err);
       }
     };
 
@@ -86,8 +90,9 @@ const OrdersPage = () => {
 };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      <div className="container mx-auto py-8 px-4">
+    <div className="flex bg-gray-900 text-white min-h-screen">
+      <Navbar />
+      <div className="flex-grow p-6 ml-64 overflow-auto">
         <h1 className="text-3xl font-bold mb-6">Order Management</h1>
 
         {/* ค้นหาและปุ่มสร้าง */}

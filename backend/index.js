@@ -14,10 +14,12 @@ const app = express();
 
 // เปิดใช้งาน CORS
 app.use(cors({
-    origin: 'http://localhost:3000', // Frontend URL
+    origin: 'http://localhost:3000', // URL ของ Frontend
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true, // หากใช้ Cookies หรือ Auth Headers
 }));
+
 
 app.use(bodyParser.json());
 

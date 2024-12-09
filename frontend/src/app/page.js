@@ -10,15 +10,11 @@ const HomePage = () => {
                 <p className="text-lg text-gray-400 mb-8">
                     Manage your products, customers, orders, and more with ease and efficiency in a modern dark mode design.
                 </p>
+                <p className="text-xs">ข้อความนี้ควรมีขนาดเล็ก</p>
                 <div className="flex justify-center space-x-6">
                     <Link href="/products" legacyBehavior>
                         <a className="bg-blue-500 text-white px-8 py-4 rounded-lg shadow-lg hover:bg-blue-400 transition ease-in-out duration-200 text-lg font-medium">
                             Go to Products
-                        </a>
-                    </Link>
-                    <Link href="/customers" legacyBehavior>
-                        <a className="bg-green-500 text-white px-8 py-4 rounded-lg shadow-lg hover:bg-green-400 transition ease-in-out duration-200 text-lg font-medium">
-                            Go to Customers
                         </a>
                     </Link>
                 </div>

@@ -5,6 +5,7 @@ import API from "../../../services/api";
 import CreateSupplier from './components/CreateSupplier';
 import ViewSupplier from './components/ViewSupplier';
 import EditSupplier from "./components/EditSupplier";
+import Navbar from "app/sideBar/Navbar";
 
 const SuppliersPage = () => {
   const [suppliers, setSuppliers] = useState([]);
@@ -86,8 +87,9 @@ const SuppliersPage = () => {
 };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      <div className="container mx-auto py-8 px-4">
+    <div className="flex bg-gray-900 text-white min-h-screen">
+      <Navbar />
+      <div className="flex-grow p-6 ml-64 overflow-auto">
         <h1 className="text-3xl font-bold mb-6">Supplier Management</h1>
 
         {/* ค้นหาและปุ่มสร้าง */}

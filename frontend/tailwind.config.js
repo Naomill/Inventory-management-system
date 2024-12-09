@@ -7,6 +7,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        lineseedsans: ["LINESeedSans"],
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
