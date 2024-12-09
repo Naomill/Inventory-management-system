@@ -11,7 +11,7 @@ const ChangeStatusExportOrder = ({ isOpen, onClose, onConfirm, status }) => {
         </h3>
         <p className="text-gray-400 mb-4">
           If you click “Confirm”, this export order will be{" "}
-          {status === "Pending" ? "set to Pending" : status === "Completed" ? "completed" : "cancelled"}.
+          {status === 0 ? "deactivated" : "activated"}.
         </p>
         <div className="flex justify-end space-x-4">
           <button

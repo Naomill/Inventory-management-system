@@ -108,7 +108,7 @@ const EditSupplier = ({ supplier, onClose, onSave }) => {
               name="address"
               value={formData.address}
               onChange={handleInputChange}
-              className="w-full bg-gray-700 text-white p-2 rounded mb-2"
+              className="w-full bg-gray-700 text-white p-2 rounded mb-2 h-40"
             ></textarea>
             <label className="block text-gray-400 mb-1 text-sm">
               Status <span className="text-red-500">*Important</span>

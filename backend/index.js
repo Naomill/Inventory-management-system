@@ -12,7 +12,7 @@ const exportOrderRoutes = require('./routes/export_orders');
 
 const app = express();
 
-// เปิดใช้งาน CORS
+
 app.use(cors({
     origin: 'http://localhost:3000', // URL ของ Frontend
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
@@ -20,8 +20,8 @@ app.use(cors({
     credentials: true, // หากใช้ Cookies หรือ Auth Headers
 }));
 
-
-app.use(bodyParser.json());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);

@@ -137,6 +137,19 @@ router.post('/', async (req, res) => {
 // updata export Order by Id
 router.put('/:id', async (req, res) => {
     const { id } = req.params;
+
+    console.log("Request Params ID:", id); // Log id ที่ได้รับ
+    console.log("Request Body:", req.body); // Log body ที่ได้รับ
+
+    // ตรวจสอบว่า id เป็นตัวเลขและ req.body ไม่ว่างเปล่า
+    if (!id || isNaN(id)) {
+        return res.status(400).json({ error: 'Invalid ID format' });
+    }
+    if (!req.body) {
+        return res.status(400).json({ error: 'Request body is missing' });
+    }
+
+    // ดึงข้อมูลจาก req.body
     const {
         customer_id,
         shipping_date,
@@ -149,16 +162,13 @@ router.put('/:id', async (req, res) => {
         status
     } = req.body;
 
-    if (!id || isNaN(id)) {
-        return res.status(400).json({ error: 'Invalid ID format' });
-    }
-
     // ตรวจสอบข้อมูลที่จำเป็น
     if (!customer_id || !shipping_address || !product_id || !quantity || !subtotal || !total_amount) {
         return res.status(400).json({ error: 'Missing required fields' });
     }
 
     try {
+        // ตรวจสอบว่า Export Order มีอยู่จริง
         const [existingOrder] = await db.query('SELECT * FROM export_orders WHERE export_order_id = ?', [id]);
         if (existingOrder.length === 0) {
             return res.status(404).json({ error: 'Export Order not found' });
@@ -193,12 +203,12 @@ router.put('/:id', async (req, res) => {
             customer_id,
             shipping_date,
             shipping_address,
-            shipping_status || 'Pending',
+            shipping_status ?? 'Pending', // ใช้ค่า Default หากเป็น null หรือ undefined
             product_id,
             quantity,
             subtotal,
             total_amount,
-            status || 'Pending',
+            status ?? 'Pending', // ใช้ค่า Default หากเป็น null หรือ undefined
             id
         ]);
 
@@ -206,9 +216,11 @@ router.put('/:id', async (req, res) => {
         const [updatedOrder] = await db.query('SELECT * FROM export_orders WHERE export_order_id = ?', [id]);
         res.status(200).json(updatedOrder[0]);
     } catch (err) {
+        console.error("Error in PUT /export-orders/:id:", err.message);
         res.status(500).json({ error: err.message });
     }
 });
+
 
 // change status of export order by ID
 router.patch('/:id/status', async (req, res) => {
