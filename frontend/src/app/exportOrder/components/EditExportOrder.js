@@ -63,7 +63,7 @@ const EditExportOrder = ({ exportOrder, onClose, onSave }) => {
 
             <label className="text-gray-400">Shipping Date</label>
             <input
-              type="text"
+              type="date"
               name="shipping_data"
               value={formData.shipping_data}
               onChange={handleInputChange}

@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import API from "../../../services/api";
 import CreateCustomers from './components/CreateCustomers'; 
-import ViewCustomer from './components/ViewCustomers';
 import EditCustomer from "./components/EditCustomers";
 
 const CustomersPage = () => {
@@ -168,35 +167,21 @@ const CustomersPage = () => {
                     </span>
                   </td>
                   <td className="border border-gray-700 px-4 py-2">
-                  <div className="flex justify-center items-center space-x-2">
-                    {/* ปุ่ม Show */}
-                    <button
-                      onClick={() => handleViewCustomer(customer.customer_id)}
-                      className="bg-blue-500 px-4 py-2 rounded hover:bg-blue-600 text-white "
-                    >
-                      Show
-                    </button>
-
+          
                     {/* ปุ่ม Edit */}
                     <button
                       onClick={() => handleEdit(customer)}
-                      className="bg-yellow-500 px-4 py-2 rounded hover:bg-amber-500 text-white"
+                      className="bg-blue-500 px-4 py-2 rounded hover:bg-blue-600 text-white"
                     >
                       Edit
                     </button>
-                    </div>
+                    
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
 
-          {selectedCustomer && (
-            <ViewCustomer
-              customer={selectedCustomer}
-              onClose={() => setSelectedCustomer(null)}
-            />
-          )}
         </div>
         
         {editingCustomer && (

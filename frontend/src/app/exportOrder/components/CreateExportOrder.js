@@ -54,7 +54,7 @@ const CreateExportOrder = ({ onExportOrderCreated }) => {
                     className="border px-2 py-1"
                 />
                 <input
-                    type="text"
+                    type="date"
                     name="shipping_data"
                     placeholder="Shipping Date"
                     value={formData.shipping_data}

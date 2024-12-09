@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import API from "../../../services/api";
 import CreateOrder from './components/CreateOrder';
-import ViewOrder from './components/ViewOrder';
 import EditOrder from "./components/EditOrder";
 
 const OrdersPage = () => {
@@ -183,38 +182,23 @@ const OrdersPage = () => {
                         </td>
 
                   <td className="border border-gray-700 px-4 py-2">
-                  <div className="flex justify-center items-center space-x-2">
-                    {/* ปุ่ม Show */}
-                    <button
-                      onClick={() => handleViewOrder(order.order_id)}
-                      className="bg-blue-500 px-4 py-2 rounded hover:bg-blue-600  text-white "
-                    >
-                      Show
-                    </button>
+                  
 
                     {/* ปุ่ม Edit */}
                     <button
                       onClick={() => handleEdit(order)}
-                      className="bg-yellow-500 px-4 py-2 rounded hover:bg-amber-500 text-white"
+                      className="bg-blue-500 px-4 py-2 rounded hover:bg-blue-600  text-white"
                     >
                       Edit
                     </button>
-                    </div>
+                 
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
 
-          {selectedOrder && (
-                <ViewOrder
-                    order={selectedOrder}
-                    onClose={() => setSelectedOrder(null)}
-                />
-            )}
-
-            
-        </div>
+    </div>
         {editingOrder && (
         <EditOrder
             order={editingOrder}
